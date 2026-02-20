@@ -2,19 +2,37 @@
  * This file is for api call functions to get data
  */
 
+const HEADERS = {
+    "User-Agent": "EldritchSpellbook/1.0",
+    "Accept": "application/json"
+}
+
 function getCardByNameExact (name) {
-    fetch('https://api.scryfall.com/cards/named?exact='+name), {
-        headers: {
-            "User-Agent": "EldritchSpellbook/1.0",
-            "Accept": "application/json"
-        }    
-    }
-    .then((response) => {
-        return response.json();
+    return fetch('https://api.scryfall.com/cards/named?exact='+encodeURIComponent(name), {
+        headers: HEADERS
     })
-    .then((data) => {
-        console.log(data);
+    .then((response) => {
+        if(!response.ok) {
+            return null;
+        }
+        return response.json();
     })
 }
 
-export { getCardByNameExact };
+function getCardByNameFuzzy (name) {
+    return fetch('https://api.scryfall.com/cards/named?fuzzy='+encodeURIComponent(name), {
+        headers: HEADERS
+    })
+    .then((response) => {
+        if(!response.ok) {
+            return null;
+        }
+        return response.json();
+    })
+    .catch (() => {
+        return null;
+    })
+}
+
+
+export { getCardByNameExact, getCardByNameFuzzy };

@@ -1,0 +1,101 @@
+:root {
+    --primary-color: #0F0016;
+    --secondary-color: #D8BD53;
+}
+
+/* Fonts */
+@font-face {
+    font-family: 'Rocker';
+    src: url('newrocker-regular-webfont.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Inria';
+    src: url('InriaSerif-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: 'Inria', serif;
+    color: var(--primary-color);
+    background-color: var(--primary-color);
+}
+
+h1,
+h2,
+h3,
+h4 {
+    font-family: 'Rocker', sans-serif;  
+    font-weight: 400;
+}
+
+a {
+    font-family: 'Rocker', sans-serif;  
+    text-decoration: none;
+}
+
+.container {
+    margin: 0 auto;
+    max-width: 1600px;
+    padding: 0 1rem;
+}
+
+nav {
+    background-color: var(--secondary-color);
+    padding: 0.5rem 0;
+}
+
+nav a {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+}
+
+.navigation {
+    display: flex;
+    text-align: center;
+    align-items: center;
+    gap: 3rem;
+    justify-content: center;
+}
+
+.banner {
+    text-align: center;
+    color: white;
+    padding: 10rem 0;
+}
+
+.banner h2 {
+    font-size: 6rem;
+}
+
+.banner p {
+    font-size: 2rem;
+}
+
+.banner-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1.25rem;
+    padding-top: 1rem;
+}
+
+.banner-buttons a {
+    font-family: 'Rocker', sans-serif;  
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    font-size: 2rem;
+    width: 300px;
+    display: block;
+    text-decoration: none
+}
+
+.banner-buttons a:first-of-type {
+    border-radius: 16px 0 0 16px;
+}
+
+.banner-buttons a:last-of-type {
+    border-radius: 0 16px 16px 0;
+}

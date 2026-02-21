@@ -1,6 +1,7 @@
 :root {
     --primary-color: #0F0016;
     --secondary-color: #D8BD53;
+    --white: #fff;
 }
 
 /* Fonts */
@@ -24,6 +25,13 @@ body {
     background-color: var(--primary-color);
 }
 
+.container {
+    margin: 0 auto;
+    max-width: 1600px;
+    padding: 0 1rem;
+}
+
+
 h1,
 h2,
 h3,
@@ -32,15 +40,13 @@ h4 {
     font-weight: 400;
 }
 
+h2 {
+    font-size: 3rem;
+}
+
 a {
     font-family: 'Rocker', sans-serif;  
     text-decoration: none;
-}
-
-.container {
-    margin: 0 auto;
-    max-width: 1600px;
-    padding: 0 1rem;
 }
 
 nav {
@@ -63,7 +69,7 @@ nav a {
 
 .banner {
     text-align: center;
-    color: white;
+    color: var(--white);
     padding: 10rem 0;
 }
 
@@ -98,4 +104,36 @@ nav a {
 
 .banner-buttons a:last-of-type {
     border-radius: 0 16px 16px 0;
+}
+
+.search {
+    color: var(--white);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+}
+
+.search .grid {
+    padding-top: 2rem;
+}
+
+.search .grid aside {
+    grid-column: span 2;
+}
+
+.search .grid section {
+    grid-column: span 10;
+}
+
+#card-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+}
+
+#card-grid img {
+    grid-column: span 1;
+    width: 100%;
 }

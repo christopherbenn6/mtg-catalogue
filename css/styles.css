@@ -96,6 +96,11 @@ nav a {
     width: 300px;
     display: block;
     text-decoration: none
+    
+}
+
+.banner-buttons a:hover {
+    text-decoration: underline;
 }
 
 .banner-buttons a:first-of-type {
@@ -129,11 +134,27 @@ nav a {
 
 #card-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 20px;
 }
 
 #card-grid img {
     grid-column: span 1;
-    width: 100%;
+}
+
+#load-more {
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    text-align: center;
+    padding: 0rem 0;
+    max-width: 300px;
+    margin: 2rem auto;
+    font-family: 'Rocker', sans-serif;  
+    font-size: 2rem;
+    border-radius: 1rem;
+}
+
+#load-more:hover {
+    text-decoration: underline;
+    cursor: pointer;
 }

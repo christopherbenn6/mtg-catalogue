@@ -98,4 +98,14 @@ function searchCards(sorting, params) {
         return response.json();
     })
 }
-export { getCardByNameExact, getCardByNameFuzzy, getNewestSetCode, getFromSet, getAllCardsByReleaseDate, searchCards };
+
+function fetchData(url) {
+    return fetch(url, {
+        headers: HEADERS
+    })
+    .then(response => {
+        return response.json();
+    })
+}
+
+export { getCardByNameExact, getCardByNameFuzzy, getNewestSetCode, getFromSet, getAllCardsByReleaseDate, searchCards, fetchData };

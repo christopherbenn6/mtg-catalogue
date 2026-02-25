@@ -1,57 +1,76 @@
-import { getCardByNameExact, getCardByNameFuzzy, getNewestSetCode, getFromSet, getAllCardsByReleaseDate, searchCards } from '../js/api.js';
+import { getCardByNameExact, getCardByNameFuzzy, getNewestSetCode, getFromSet, getAllCardsByReleaseDate, searchCards, fetchData } from '../js/api.js';
 
-let maxNumberOfCards = 30;
-let cardIncrement = 30;
-let allCards = "";
+let maxNumberOfCards = 80;
+const cardIncrement = 80;
+let cardData; // store all loaded cards and next_page
 
+async function loadCardArray(sortingMode, filterObject) {
+    // Initial fetch
+    cardData = await searchCards(sortingMode, filterObject);
+    renderCards(cardData.data, 0, maxNumberOfCards);
+    setupLoadMore();
+}
 
-/**
- * 
- * @param {*} maxNumberOfCards 
- * @param {*} cardIncrement 
- * @param {*} sortingMode  
- * Sorting Options: name set released rarity color usd tix eur cmc power toughness edhrec penny artist review
-  
- *  
- * @param {*} filterObject 
- */
-async function loadCardArray(maxNumberOfCards, cardIncrement, sortingMode, filterObject, allCards) {
+function setupLoadMore() {
     const loadMore = document.querySelector('#load-more');
-    loadMore.innerHTML = ``;
+    loadMore.innerHTML = '';
 
-    const cardGrid = document.querySelector('#card-grid');
-    // Card data fetches the data, then adds it to all Cards. 
-    // To allow for multiple pages (scryfall api pages) we replace cardData whenever we need more cards then add them to allCards
-    let cardData = await searchCards(`${sortingMode}`, filterObject); 
-    let cards = cardData.data;
-    
-    cardGrid.innerHTML = ``;
+    if (cardData.data.length > maxNumberOfCards || cardData.next_page) {
+        const button = document.createElement('p');
+        button.id = 'load-more-button';
+        button.textContent = 'Load More';
 
-    for(let i = 0; i < maxNumberOfCards && i < cards.length; i++) {
-        let image = 'img/blank.avif';
-        if(cards[i]['card_faces'] != null && cards[i]['image_uris'] == null) {
-            image = cards[i]['card_faces'][0]['image_uris']['normal'];
-        } else {
-            image = cards[i]['image_uris']['normal'];
-        }
-        cardGrid.innerHTML += `<img class="mtg-card" src="${image}">`;
-    }
-
-    if(cards.length > maxNumberOfCards && document.querySelector('#load-more-button') == null) {
-        const button = `<p id="load-more-button">Load More</p>`;
-        loadMore.innerHTML += button;
-        loadMore.addEventListener('click', () => {
+        button.addEventListener('click', async () => {
+            const previousCount = maxNumberOfCards;
             maxNumberOfCards += cardIncrement;
-            loadCardArray(maxNumberOfCards, cardIncrement, 'cmc', filterObject);
+
+            // Check if we need to fetch next page
+            if (maxNumberOfCards > cardData.data.length && cardData.next_page) {
+                const nextPageData = await fetchData(cardData.next_page);
+                cardData.data = [...cardData.data, ...nextPageData.data];
+                cardData.next_page = nextPageData.next_page;
+            }
+
+            renderCards(cardData.data, previousCount, maxNumberOfCards);
+
+            // Recheck if the button should remain
+            if (maxNumberOfCards >= cardData.data.length && !cardData.next_page) {
+                loadMore.innerHTML = ''; // remove button if no more cards
+            }
         });
+
+        loadMore.appendChild(button);
     }
 }
 
+function renderCards(cards, startIndex, endIndex) {
+    const cardGrid = document.querySelector('#card-grid');
+    const fragment = document.createDocumentFragment();
 
-let filterObject = {
-    "color": "wb",
-    "mana-value": null,
-    "card-type": "land"
+    for (let i = startIndex; i < endIndex && i < cards.length; i++) {
+        let image = 'img/blank.avif';
+
+        if (cards[i].card_faces && !cards[i].image_uris) {
+            image = cards[i].card_faces[0].image_uris.normal;
+        } else if (cards[i].image_uris) {
+            image = cards[i].image_uris.normal;
+        }
+
+        const img = document.createElement('img');
+        img.className = 'mtg-card';
+        img.src = image;
+        img.loading = "lazy";
+        fragment.appendChild(img);
+    }
+
+    cardGrid.appendChild(fragment);
 }
 
-loadCardArray(maxNumberOfCards, cardIncrement, 'cmc', filterObject);
+// Start loading
+const filterObject = {
+    "color": "rgb",
+    "mana-value": 5,
+    "card-type": "land"
+};
+
+loadCardArray('cmc', filterObject);

@@ -71,5 +71,31 @@ function getAllCardsByReleaseDate() {
         return cardData;
     })
 }
+/**
+ * 
+ * @param {string} sorting - The sotring string. Must be one of Scryfall's allowed values
+ * @param {object} params - All parameters that the searched cards must match
+ * 
+ */
+function searchCards(sorting, params) {
+    let url = `${BASE_API}/cards/search?order=${sorting}&q=`;
+    let filterString = [];
 
-export { getCardByNameExact, getCardByNameFuzzy, getNewestSetCode, getFromSet, getAllCardsByReleaseDate };
+    if(params['color'] != null) {
+        filterString.push(`c:${params['color']}`);
+    }
+
+    if(params['mana-value'] != null) {
+        filterString.push(`mv=${params['mana-value']}`);
+    } 
+
+    url += encodeURIComponent(filterString.join(" "));
+    console.log(url);
+    return fetch(url, {
+        headers: HEADERS
+    })
+    .then(response => {
+        return response.json();
+    })
+}
+export { getCardByNameExact, getCardByNameFuzzy, getNewestSetCode, getFromSet, getAllCardsByReleaseDate, searchCards };

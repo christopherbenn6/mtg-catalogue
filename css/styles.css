@@ -115,26 +115,9 @@ nav a {
     color: var(--white);
 }
 
-.grid {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-}
-
-.search .grid {
-    padding-top: 2rem;
-}
-
-.search .grid aside {
-    grid-column: span 2;
-}
-
-.search .grid section {
-    grid-column: span 10;
-}
-
 #card-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 20px;
 }
 
@@ -157,4 +140,8 @@ nav a {
 #load-more:hover {
     text-decoration: underline;
     cursor: pointer;
+}
+
+.mtg-card {
+    border-radius: 1rem;
 }

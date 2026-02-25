@@ -1,9 +1,3 @@
-:root {
-    --primary-color: #0F0016;
-    --secondary-color: #D8BD53;
-    --white: #fff;
-}
-
 /* Fonts */
 @font-face {
     font-family: 'Rocker';
@@ -17,6 +11,14 @@
     src: url('InriaSerif-Regular.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
+}
+
+:root {
+    --primary-color: #0F0016;
+    --secondary-color: #D8BD53;
+    --white: #fff;
+    --heading-font: 'Rocker', serif;
+    --body-font: 'Inria', serif;
 }
 
 body {
@@ -144,4 +146,40 @@ nav a {
 
 .mtg-card {
     border-radius: 1rem;
+}
+
+.search main {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+}
+
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    padding-bottom: 2rem;
+}
+
+.filters > div {
+    flex: 1 1 200px;
+}
+
+input, select {
+    width: 100%;
+    border-radius: 1rem;
+    padding: 0.25rem 2rem;
+    font-family: var(--heading-font) !important;
+    font-size: 1.5rem !important;
+}
+
+select {
+    background: url(../img/down-chevron.svg) right 5px center no-repeat;
+    background-size: 40px;
+}
+
+select, #search-submit {
+    background-color: var(--secondary-color);
+    -webkit-appearance: none;
+    -moz-appearance: none;    
+    appearance: none;
 }

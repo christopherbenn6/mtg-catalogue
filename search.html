@@ -24,6 +24,77 @@
     <main class="container">
         <section>
             <h2>Search</h2>
+
+            <!-- Search & Filters -->
+            <form class="filters">
+                <!-- Searchbar -->
+                <div>
+                    <input type="text" id="card-search" name="card-search" placeholder="Search">
+                </div>
+
+                <!-- Card Type -->
+                <div>
+                    <select name="card-type" id="card-type">
+                        <option value="">All Types
+                        </option>
+                        <option id="creature" value="creature">Creature</option>
+                        <option id="artifact" value="artifact">Artifact</option>
+                        <option id="enchantment" value="enchantment">Enchantment</option>
+                        <option id="land" value="land">Land</option>
+                        <option id="instant" value="instant">Instant</option>
+                        <option id="sorcery" value="sorcery">Sorcery</option>
+                        <option id="planeswalker" value="planeswalker">Planeswalker</option>
+                        <option id="battle" value="battle">Battle</option>
+                        <option id="kindred" value="kindred">Kindred</option>
+                    </select>
+                </div>
+
+                <!-- Mana Value -->
+                <div>
+                    <select name="mana-value" id="mana-value">
+                        <option value="">Mana Value</option>
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10+</option>
+                    </select>
+                </div>
+
+                <!-- Sorting Mode -->
+                <div>
+                    <select name="sorting-mode" id="sorting-mode">
+                        <option value="name">Name</option>
+                        <option value="set">Set</option>
+                        <option value="released">Released</option>
+                        <option value="rarity">Rarity</option>
+                        <option value="color">Color</option>
+                        <option value="usd">USD</option>
+                        <option value="cmc">Mana Cost</option>
+                        <option value="power">Power</option>
+                        <option value="toughness">Toughness</option>
+                        <option value="edhrec">EDHREC</option>
+                    </select>
+                </div>
+
+                <div>
+                    <select name="sort-direction" id="sort-direction">
+                        <option value="asc">Ascending</option>
+                        <option value="desc">Descending</option>
+                    </select>
+                </div>
+
+                <!-- Apply Filters -->
+                <div>
+                    <input class="filter-button" type="submit" id="search-submit" name="search-submit">
+                </div>
+            </form>
             <div id="card-grid">
                 <!-- Cards Go Here (JS) -->
             </div>

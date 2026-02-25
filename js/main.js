@@ -1,12 +1,16 @@
-import { getCardByNameExact, getCardByNameFuzzy, getNewestSetCode, getFromSet, getAllCardsByReleaseDate, searchCards, fetchData } from '../js/api.js';
+import { getCardByNameExact, getCardByNameFuzzy, getNewestSetCode, getFromSet, getAllCardsByReleaseDate, filterCards, fetchData, searchCards } from '../js/api.js';
 
 let maxNumberOfCards = 80;
 const cardIncrement = 80;
 let cardData; // store all loaded cards and next_page
 
-async function loadCardArray(sortingMode, filterObject) {
+async function loadCardArray(filterObject) {
     // Initial fetch
-    cardData = await searchCards(sortingMode, filterObject);
+    if(filterObject['card-search'] != "" && filterObject['card-search'] != null) {
+        cardData = await searchCards(filterObject['sort-direction'], filterObject['sorting-mode'], filterObject['card-search']);
+    } else {
+        cardData = await filterCards(filterObject['sort-direction'], filterObject['sorting-mode'], filterObject);
+    }
     renderCards(cardData.data, 0, maxNumberOfCards);
     setupLoadMore();
 }
@@ -67,11 +71,43 @@ function renderCards(cards, startIndex, endIndex) {
 }
 
 // Start loading
-const filterObject = {
-    // Todo: make cards like mox pearl show but exclude colorless cards (id:w)
-    "color": "w",
-    "mana-value": 0,
-    "card-type": "land"
-};
 
-loadCardArray('cmc', filterObject);
+function filterObject () {
+    let getValues = window.location.search.substring(1).split('&');
+    let $_GET = {}
+    for(let i = 0; i < getValues.length; i++) {
+        let temp = getValues[i].split('=');
+        $_GET[decodeURIComponent(temp[0])] = decodeURIComponent(temp[1]);
+    }
+    let filterCount = getValues.length;
+    for(let i = 0; i < getValues.length; i++) {
+        if($_GET[i] == "") {
+            $_GET[i] = null;
+            filterCount--;
+        }
+    }
+    if ($_GET != {} && filterCount >= 0) {
+        return $_GET;
+    } else {
+        return {
+            "sorting-mode": "released",
+            "sort-direction": "asc",
+            "card-search": null,
+            "color": null,
+            "mana-value": null,
+            "card-type": null,
+            "rarity": null,
+            "legalty": "vintage",
+            "minyear": null,
+            "maxyear": null,
+            "minpower": null,
+            "maxpower": null,
+            "mintoughness": null,
+            "maxtoughness": null,
+            "minloyalty": null,
+            "maxloyalty": null
+        }
+    }
+}
+ 
+loadCardArray(filterObject());

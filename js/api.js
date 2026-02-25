@@ -31,9 +31,6 @@ function getCardByNameFuzzy (name) {
         }
         return response.json();
     })
-    .catch (() => {
-        return null;
-    })
 }
 
 function getNewestSetCode () {
@@ -77,20 +74,86 @@ function getAllCardsByReleaseDate() {
  * @param {object} params - All parameters that the searched cards must match
  * 
  */
-function searchCards(sorting, params) {
-    let url = `${BASE_API}/cards/search?order=${sorting}&q=`;
+function filterCards(sortDirection, sorting, params) {
+    let url = `${BASE_API}/cards/search?order=${sorting}&dir=${sortDirection}&q=`;
     let filterString = [];
 
-    if(params['color'] != null) {
+    if(params['color']) {
         filterString.push(`c:${params['color']}`);
     }
 
-    if(params['mana-value'] != null) {
-        filterString.push(`mv=${params['mana-value']}`);
+    if(params['mana-value']) {
+        if(params['mana-value'] >= 10){
+            filterString.push(`mv>=${params['mana-value']}`);
+        } else {
+            filterString.push(`mv=${params['mana-value']}`);
+        }
     } 
+
+    // Card Type ex. creature, kindred
+    if(params['card-type']) {
+        filterString.push(`t:${params['card-type']}`);
+    }
+
+    // Card Rarity ex. common, rare, mythic
+    if(params['rarity']) {
+        filterString.push(`rarity:${params['rarity']}`);
+    }
+
+    // Format Legality
+    if(params['legalty']) {
+        filterString.push(`f:${params['legalty']}`);
+    } else {
+        // If nothing specified, use vintage cards
+        filterString.push(`f:vintage`); 
+    }
+
+    if(params['minyear']) {
+        filterString.push(`year>=${params['minyear']}`);
+    }
+    
+    if(params['maxyear']) {
+        filterString.push(`year<=${params['maxyear']}`);
+    }
+
+    if(params['minpower']) {
+        filterString.push(`pow>=${params['minpower']}`);
+    }
+
+    if(params['maxpower']) {
+        filterString.push(`pow<=${params['maxpower']}`);
+    }
+
+    if(params['mintoughness']) {
+        filterString.push(`tou>=${params['mintoughness']}`);
+    }
+
+    if(params['maxtoughness']) {
+        filterString.push(`tou<=${params['maxtoughness']}`);
+    }
+
+    if(params['minloyalty']) {
+        filterString.push(`loy>=${params['minloyalty']}`);
+    }
+
+    if(params['maxloyalty']) {
+        filterString.push(`loy<=${params['maxloyalty']}`);
+    }
 
     url += encodeURIComponent(filterString.join(" "));
     console.log(url);
+    return fetch(url, {
+        headers: HEADERS
+    })
+    .then(response => {
+        return response.json();
+    })
+}
+
+function searchCards (sortDirection, sorting, searchTerm) {
+    let filters = `o:${searchTerm} or t:${searchTerm} or name:${searchTerm}`
+    filters = encodeURIComponent(filters);
+    let url = `${BASE_API}/cards/search?order=${sorting}&dir=${sortDirection}&q=${filters}`;
     return fetch(url, {
         headers: HEADERS
     })
@@ -108,4 +171,4 @@ function fetchData(url) {
     })
 }
 
-export { getCardByNameExact, getCardByNameFuzzy, getNewestSetCode, getFromSet, getAllCardsByReleaseDate, searchCards, fetchData };
+export { getCardByNameExact, getCardByNameFuzzy, getNewestSetCode, getFromSet, getAllCardsByReleaseDate, filterCards, fetchData, searchCards };

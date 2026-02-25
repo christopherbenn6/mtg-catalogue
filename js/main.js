@@ -68,8 +68,9 @@ function renderCards(cards, startIndex, endIndex) {
 
 // Start loading
 const filterObject = {
-    "color": "rgb",
-    "mana-value": 5,
+    // Todo: make cards like mox pearl show but exclude colorless cards (id:w)
+    "color": "w",
+    "mana-value": 0,
     "card-type": "land"
 };
 

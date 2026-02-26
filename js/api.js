@@ -79,20 +79,32 @@ function filterCards(sortDirection, sorting, params) {
     let filterString = [];
 
     if(params['color']) {
-        filterString.push(`c:${params['color']}`);
+        filterString.push(`ci=${params['color']} -c=c`);
     }
 
     if(params['mana-value']) {
-        if(params['mana-value'] >= 10){
-            filterString.push(`mv>=${params['mana-value']}`);
-        } else {
-            filterString.push(`mv=${params['mana-value']}`);
-        }
+        let manaValues = params['mana-value'].split('-');
+        let manaValueFilters = [];
+        manaValues.forEach(manaValue => {
+            if(manaValue >= 10){
+                filterString.push(`mv>=${params['mana-value']}`);
+            } else {
+                manaValueFilters.push(`mv=${manaValue}`);            
+            }
+        });
+        filterString.push(`(${manaValueFilters.join(' or ')})`);
+        
     } 
 
     // Card Type ex. creature, kindred
+    // Is inclusive (artifact creature)
     if(params['card-type']) {
-        filterString.push(`t:${params['card-type']}`);
+        let cardTypes = params['card-type'].split('-');
+        let cardTypeFilters = [];
+        cardTypes.forEach(cardType => {
+            cardTypeFilters.push(`t:${cardType}`)
+        });
+        filterString.push(cardTypeFilters.join(' '));
     }
 
     // Card Rarity ex. common, rare, mythic

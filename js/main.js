@@ -4,6 +4,85 @@ let maxNumberOfCards = 80;
 const cardIncrement = 80;
 let cardData; // store all loaded cards and next_page
 
+// Select Dropdown Functionality
+let dropdownButtons = document.querySelectorAll('.dropdown-button');
+dropdownButtons.forEach(button => {
+    button.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        const dropdown = button.nextElementSibling;
+        dropdown.classList.toggle('hidden');
+        button.classList.toggle('clicked');
+    })
+});
+
+// SVG enable
+let dropdownSelect = document.querySelectorAll('.dropdown > div');
+dropdownSelect.forEach(select => {
+    select.addEventListener('click', () => {
+        let svg = select.querySelector('svg');
+        svg.classList.toggle('hidden');
+    });
+});
+
+// Color Selection
+let colorButtons = document.querySelectorAll('.color .dropdown div');
+let colorInput = document.querySelector('#color')
+let colors = "";
+
+colorButtons.forEach(colorButton => {
+    colorButton.addEventListener('click', () => {
+        let color = colorButton.getAttribute('data-value');
+        if(colors.includes(color)) {
+            colors = colors.replace(color, "");
+        } else {
+            colors = colors + color;
+        }
+        colorInput.value = colors;
+    })
+});
+
+// Card Type
+let typeButtons = document.querySelectorAll('.card-type .dropdown div');
+let typeInput = document.querySelector('#card-type')
+
+// Types as an array thats converted to a string later
+let types = [];
+
+typeButtons.forEach(typeButton => {
+    typeButton.addEventListener('click', () => {
+        let cardType = typeButton.getAttribute('data-value');
+        if(types.includes(cardType)) {
+            // 1 means remove only the first
+            types.splice(types.indexOf(cardType), 1)
+        } else {
+            types.push(cardType);
+        }
+        let typesString = types.join('-')
+        typeInput.value = typesString;
+    })
+});
+
+// Mana Value
+let manaButtons = document.querySelectorAll('.mana-value .dropdown div');
+let manaInput = document.querySelector('#mana-value')
+
+// Mana values as an array thats converted to a string later
+let manaValues = [];
+
+manaButtons.forEach(manaButton => {
+    manaButton.addEventListener('click', () => {
+        let manaValue = manaButton.getAttribute('data-value');
+        if(manaValues.includes(manaValue)) {
+            // 1 means remove only the first
+            manaValues.splice(manaValues.indexOf(manaValue), 1)
+        } else {
+            manaValues.push(manaValue);
+        }
+        let manaValuesString = manaValues.join('-')
+        manaInput.value = manaValuesString;
+    })
+});
+
 async function loadCardArray(filterObject) {
     // Initial fetch
     if(filterObject['card-search'] != "" && filterObject['card-search'] != null) {
@@ -85,6 +164,9 @@ function filterObject () {
             $_GET[i] = null;
             filterCount--;
         }
+    }
+    if($_GET['card-search'] != null) {
+        $_GET['card-search'] = $_GET['card-search'].replace("+", " ")
     }
     if ($_GET != {} && filterCount >= 0) {
         return $_GET;

@@ -78,6 +78,11 @@ function filterCards(sortDirection, sorting, params) {
     let url = `${BASE_API}/cards/search?order=${sorting}&dir=${sortDirection}&q=`;
     let filterString = [];
 
+    if(params['card-search']) {
+        let searchTerm = params['card-search'];
+        filterString.push(`(o:${searchTerm} or t:${searchTerm} or name:${searchTerm})`)
+    }
+
     if(params['color']) {
         filterString.push(`ci=${params['color']} -c=c`);
     }
@@ -85,9 +90,10 @@ function filterCards(sortDirection, sorting, params) {
     if(params['mana-value']) {
         let manaValues = params['mana-value'].split('-');
         let manaValueFilters = [];
-        manaValues.forEach(manaValue => {
+        manaValues.forEach(v => {
+            const manaValue = parseInt(v, 10);
             if(manaValue >= 10){
-                filterString.push(`mv>=${params['mana-value']}`);
+                manaValueFilters.push(`mv>=${manaValue}`);
             } else {
                 manaValueFilters.push(`mv=${manaValue}`);            
             }

@@ -16,7 +16,7 @@ dropdownButtons.forEach(button => {
 });
 
 // SVG enable
-let dropdownSelect = document.querySelectorAll('.dropdown > div');
+let dropdownSelect = document.querySelectorAll('.dropdown:not(.sorting-dropdown) > div');
 dropdownSelect.forEach(select => {
     select.addEventListener('click', () => {
         let svg = select.querySelector('svg');
@@ -64,7 +64,7 @@ typeButtons.forEach(typeButton => {
 
 // Mana Value
 let manaButtons = document.querySelectorAll('.mana-value .dropdown div');
-let manaInput = document.querySelector('#mana-value')
+let manaInput = document.querySelector('#mana-value');
 
 // Mana values as an array thats converted to a string later
 let manaValues = [];
@@ -83,13 +83,31 @@ manaButtons.forEach(manaButton => {
     })
 });
 
+let sortingButtons = document.querySelectorAll('.sorting-mode .dropdown div');
+let selectedSortingOption = document.querySelector('.sorting-mode .dropdown div:first-of-type');
+selectedSortingOption.querySelector('svg').classList.remove('hidden');
+let sortingInput = document.querySelector('#sorting-mode');
+
+sortingButtons.forEach(sortingButton => {
+    sortingButton.addEventListener('click', () => {
+        if(sortingButton != selectedSortingOption) {
+            let sortingMode = sortingButton.getAttribute('data-value');
+
+            // Svg enabling
+            let svg = sortingButton.querySelector('svg');
+            svg.classList.remove('hidden');
+            let prevSvg = selectedSortingOption.querySelector('svg');
+            prevSvg.classList.add('hidden');
+
+            selectedSortingOption = sortingButton;
+            sortingInput.value = sortingMode;
+        } 
+    })
+});
+
 async function loadCardArray(filterObject) {
     // Initial fetch
-    if(filterObject['card-search'] != "" && filterObject['card-search'] != null) {
-        cardData = await searchCards(filterObject['sort-direction'], filterObject['sorting-mode'], filterObject['card-search']);
-    } else {
-        cardData = await filterCards(filterObject['sort-direction'], filterObject['sorting-mode'], filterObject);
-    }
+    cardData = await filterCards(filterObject['sort-direction'], filterObject['sorting-mode'], filterObject);
     renderCards(cardData.data, 0, maxNumberOfCards);
     setupLoadMore();
 }
@@ -168,6 +186,7 @@ function filterObject () {
     if($_GET['card-search'] != null) {
         $_GET['card-search'] = $_GET['card-search'].replace("+", " ")
     }
+
     if ($_GET != {} && filterCount >= 0) {
         return $_GET;
     } else {
@@ -191,5 +210,4 @@ function filterObject () {
         }
     }
 }
- 
 loadCardArray(filterObject());

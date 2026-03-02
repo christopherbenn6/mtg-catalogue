@@ -4,14 +4,22 @@ let maxNumberOfCards = 80;
 const cardIncrement = 80;
 let cardData; // store all loaded cards and next_page
 
+let selectedFilterButton = null;
+
 // Select Dropdown Functionality
 let dropdownButtons = document.querySelectorAll('.dropdown-button');
 dropdownButtons.forEach(button => {
     button.addEventListener('click', (ev) => {
         ev.preventDefault();
+        if(selectedFilterButton != null && selectedFilterButton != button) {
+            const selectedDropdown = selectedFilterButton.nextElementSibling;
+            selectedDropdown.classList.add('hidden');
+            selectedFilterButton.classList.remove('clicked');
+        }
         const dropdown = button.nextElementSibling;
         dropdown.classList.toggle('hidden');
         button.classList.toggle('clicked');
+        selectedFilterButton = button;
     })
 });
 
@@ -19,6 +27,7 @@ dropdownButtons.forEach(button => {
 let dropdownSelect = document.querySelectorAll('.dropdown:not(.sorting-dropdown) > div');
 dropdownSelect.forEach(select => {
     select.addEventListener('click', () => {
+        select.classList.toggle('selected')
         let svg = select.querySelector('svg');
         svg.classList.toggle('hidden');
     });
@@ -105,11 +114,52 @@ sortingButtons.forEach(sortingButton => {
     })
 });
 
+let sortingDirectionButtons = document.querySelectorAll('.sort-direction .dropdown div');
+let selectedSortingDirectionOption = document.querySelector('.sort-direction .dropdown div:first-of-type');
+selectedSortingDirectionOption.querySelector('svg').classList.remove('hidden');
+let sortingDirectionInput = document.querySelector('#sort-direction');
+
+sortingDirectionButtons.forEach(sortingDirectionButton => {
+    sortingDirectionButton.addEventListener('click', () => {
+        if(sortingDirectionButton != selectedSortingDirectionOption) {
+            let sortingDirection = sortingDirectionButton.getAttribute('data-value');
+
+            // Svg enabling
+            let svg = sortingDirectionButton.querySelector('svg');
+            svg.classList.remove('hidden');
+            let prevSvg = selectedSortingDirectionOption.querySelector('svg');
+            prevSvg.classList.add('hidden');
+
+            selectedSortingDirectionOption = sortingDirectionButton;
+            sortingDirectionInput.value = sortingDirection;
+        } 
+    })
+});
+
 async function loadCardArray(filterObject) {
     // Initial fetch
     cardData = await filterCards(filterObject['sort-direction'], filterObject['sorting-mode'], filterObject);
-    renderCards(cardData.data, 0, maxNumberOfCards);
-    setupLoadMore();
+    // If there were cards in the search
+    if(cardData != false) {
+        renderCards(cardData.data, 0, maxNumberOfCards);
+        setupLoadMore();
+    } else {
+        const cardGrid = document.querySelector('#card-grid');
+
+        // Heading
+        const h2 = document.createElement('h2');
+        h2.classList = "no-cards";
+        h2.innerText = "404 No Cards Found";
+
+        // Text
+        const p = document.createElement('p');
+        p.classList = "no-cards";
+        p.innerText = "There were no cards found that match your search. Or there was an error.";
+
+        // Add it 
+        cardGrid.appendChild(h2);
+        cardGrid.appendChild(p);
+    }
 }
 
 function setupLoadMore() {
@@ -169,45 +219,36 @@ function renderCards(cards, startIndex, endIndex) {
 
 // Start loading
 
-function filterObject () {
-    let getValues = window.location.search.substring(1).split('&');
-    let $_GET = {}
-    for(let i = 0; i < getValues.length; i++) {
-        let temp = getValues[i].split('=');
-        $_GET[decodeURIComponent(temp[0])] = decodeURIComponent(temp[1]);
-    }
-    let filterCount = getValues.length;
-    for(let i = 0; i < getValues.length; i++) {
-        if($_GET[i] == "") {
-            $_GET[i] = null;
-            filterCount--;
-        }
-    }
-    if($_GET['card-search'] != null) {
-        $_GET['card-search'] = $_GET['card-search'].replace("+", " ")
+function filterObject() {
+    const params = new URLSearchParams(window.location.search);
+    const filters = {};
+
+    for (const [key, value] of params.entries()) {
+        filters[key] = value ? decodeURIComponent(value).replace(/\+/g, " ") : null;
     }
 
-    if ($_GET != {} && filterCount >= 0) {
-        return $_GET;
-    } else {
-        return {
-            "sorting-mode": "released",
-            "sort-direction": "asc",
-            "card-search": null,
-            "color": null,
-            "mana-value": null,
-            "card-type": null,
-            "rarity": null,
-            "legalty": "vintage",
-            "minyear": null,
-            "maxyear": null,
-            "minpower": null,
-            "maxpower": null,
-            "mintoughness": null,
-            "maxtoughness": null,
-            "minloyalty": null,
-            "maxloyalty": null
-        }
+    if (Object.keys(filters).length > 0) {
+        return filters;
     }
+
+    return {
+        "sorting-mode": "released",
+        "sort-direction": "desc",
+        "card-search": null,
+        "color": null,
+        "mana-value": null,
+        "card-type": null,
+        "rarity": null,
+        "legalty": "vintage",
+        "minyear": null,
+        "maxyear": null,
+        "minpower": null,
+        "maxpower": null,
+        "mintoughness": null,
+        "maxtoughness": null,
+        "minloyalty": null,
+        "maxloyalty": null
+    };
 }
+
 loadCardArray(filterObject());

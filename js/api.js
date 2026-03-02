@@ -164,8 +164,14 @@ function filterCards(sortDirection, sorting, params) {
         headers: HEADERS
     })
     .then(response => {
+        if(response.status === 404) {
+            return false;
+        }
         return response.json();
     })
+    .catch(err => {
+        console.error('Fetch failed:', err);
+    });
 }
 
 function searchCards (sortDirection, sorting, searchTerm) {

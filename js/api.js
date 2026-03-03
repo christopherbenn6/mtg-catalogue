@@ -9,65 +9,19 @@ const HEADERS = {
     "Accept": "application/json"
 }
 
-function getCardByNameExact (name) {
-    return fetch(`${BASE_API}/cards/named?exact=`+encodeURIComponent(name), {
-        headers: HEADERS
-    })
-    .then((response) => {
-        if(!response.ok) {
-            return null;
-        }
-        return response.json();
-    })
-}
-
-function getCardByNameFuzzy (name) {
-    return fetch(`${BASE_API}/cards/named?fuzzy=`+encodeURIComponent(name), {
-        headers: HEADERS
-    })
-    .then((response) => {
-        if(!response.ok) {
-            return null;
-        }
-        return response.json();
-    })
-}
-
-function getNewestSetCode () {
-    return fetch(`${BASE_API}/sets`, {
-        headers: HEADERS
-    })
-    .then (response => {
-        return response.json();
-    })
-    .then (allSets => {
-        return allSets.data[0].code;
-    })
-}
-
-function getFromSet(setCode) {
-    return fetch(`${BASE_API}/cards/search?q=s%3A${setCode}&unique=cards&order=name&dir=asc&include_extras=false&include_variations=false&page=1&per_page=15`, {
+function getCardById (id) {
+    return fetch(`${BASE_API}/cards/${id}`, {
         headers: HEADERS
     })
     .then(response => {
+        if(response.status === 404) {
+            return false;
+        }
         return response.json();
     })
-    .then(cardData => {
-        return cardData.data;
-    })
+
 }
 
-function getAllCardsByReleaseDate() {
-    return fetch(`${BASE_API}/cards/search?q=game:paper&order=released&dir=desc`, {
-        headers: HEADERS
-    })
-    .then(response => {
-        return response.json();
-    })
-    .then(cardData => {
-        return cardData;
-    })
-}
 /**
  * 
  * @param {string} sorting - The sotring string. Must be one of Scryfall's allowed values
@@ -174,18 +128,6 @@ function filterCards(sortDirection, sorting, params) {
     });
 }
 
-function searchCards (sortDirection, sorting, searchTerm) {
-    let filters = `o:${searchTerm} or t:${searchTerm} or name:${searchTerm}`
-    filters = encodeURIComponent(filters);
-    let url = `${BASE_API}/cards/search?order=${sorting}&dir=${sortDirection}&q=${filters}`;
-    return fetch(url, {
-        headers: HEADERS
-    })
-    .then(response => {
-        return response.json();
-    })
-}
-
 function fetchData(url) {
     return fetch(url, {
         headers: HEADERS
@@ -195,4 +137,4 @@ function fetchData(url) {
     })
 }
 
-export { getCardByNameExact, getCardByNameFuzzy, getNewestSetCode, getFromSet, getAllCardsByReleaseDate, filterCards, fetchData, searchCards };
+export { filterCards, fetchData, getCardById };

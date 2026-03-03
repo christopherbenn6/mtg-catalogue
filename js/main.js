@@ -1,8 +1,9 @@
-import { getCardByNameExact, getCardByNameFuzzy, getNewestSetCode, getFromSet, getAllCardsByReleaseDate, filterCards, fetchData, searchCards } from '../js/api.js';
+import { filterCards, fetchData } from '../js/api.js';
 
 let maxNumberOfCards = 80;
 const cardIncrement = 80;
 let cardData; // store all loaded cards and next_page
+let activeFilters = [];
 
 let selectedFilterButton = null;
 
@@ -23,7 +24,7 @@ dropdownButtons.forEach(button => {
     })
 });
 
-// SVG enable
+// SVG enable + add to active filters
 let dropdownSelect = document.querySelectorAll('.dropdown:not(.sorting-dropdown) > div');
 dropdownSelect.forEach(select => {
     select.addEventListener('click', () => {
@@ -211,7 +212,12 @@ function renderCards(cards, startIndex, endIndex) {
         img.className = 'mtg-card';
         img.src = image;
         img.loading = "lazy";
-        fragment.appendChild(img);
+        
+        const a = document.createElement('a');
+        a.href = `single.html?id=${cards[i].id}`
+        a.appendChild(img);
+
+        fragment.appendChild(a);  
     }
 
     cardGrid.appendChild(fragment);

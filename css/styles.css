@@ -32,7 +32,7 @@ body {
 
 .container {
     margin: 0 auto;
-    max-width: 1600px;
+    max-width: 1400px;
     padding: 0 1rem;
 }
 
@@ -47,6 +47,10 @@ h4 {
 
 h2 {
     font-size: 3rem;
+}
+
+h3 {
+    font-size: 2rem;
 }
 
 a {
@@ -152,7 +156,7 @@ nav a {
 }
 
 .mtg-card {
-    border-radius: 1rem;
+    border-radius: 5%;
 }
 
 
@@ -276,6 +280,49 @@ input {
 
 #search-submit {
     background-color: var(--success);
+}
+
+.active-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.active-filter {
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    font-family: var(--heading-font);
+    padding: 0.25rem 1rem;
+}
+
+.single-page {
+    color: var(--white);
+}
+
+.single-flex {
+    display: flex;
+    gap: 1rem;
+    margin-top: 3rem;
+}
+
+.single-flex
+
+.single-text {
+    margin-top: 2rem;
+}
+
+.legality {
+    margin-top: 1rem;
+    display: flex !important;
+    justify-content: space-between;
+}
+
+.legality span {
+    background-color: var(--success);
+    padding: 0.25rem;
+    color: black;
+    width: 75px;
+    text-align: center;
 }
 
 @media (width > 600px) {

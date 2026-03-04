@@ -9,8 +9,11 @@ const HEADERS = {
     "Accept": "application/json"
 }
 
-function getCardById (id) {
-    return fetch(`${BASE_API}/cards/${id}`, {
+function getPrintsId (oracleId) {
+    const queryString = encodeURIComponent(`oracle_id:${oracleId} include:extras`)+`&unique=prints`;
+    const url = `${BASE_API}/cards/search?q=${queryString}`;
+    console.log(url)
+    return fetch(url, {
         headers: HEADERS
     })
     .then(response => {
@@ -137,4 +140,4 @@ function fetchData(url) {
     })
 }
 
-export { filterCards, fetchData, getCardById };
+export { filterCards, fetchData, getPrintsId };

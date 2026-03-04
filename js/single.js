@@ -1,4 +1,4 @@
-import { getCardById } from '../js/api.js'
+import { getPrintsId } from '../js/api.js'
 
 const params = new URLSearchParams(window.location.search);
 const filters = {};
@@ -7,7 +7,9 @@ for (const [key, value] of params.entries()) {
     filters[key] = value ? decodeURIComponent(value).replace(/\+/g, " ") : null;
 }
 
-const data = await getCardById(filters.id);
+const allData = await getPrintsId(filters.id);
+const data = allData.data[0];
+console.log(data);
 
 function setCardInfo (data) {
 
@@ -18,26 +20,31 @@ function setCardInfo (data) {
         image = data.image_uris.normal;
     }
 
-    const img = `<div class="single-flex"><img src="${image}" class="mtg-card big-mtg-card">`;
-    const text = `<div class="single-text">
-        <section>
-            <h2>${data.name}</h2>
+    const text = `<div class="single-flex"><img src="${image}" class="mtg-card big-mtg-card container"><div class="single-text">
+        <section class="single-banner container">
+            <div class="name-line">
+                <h2>${data.name}</h2>
+            </div>
+            <p class="type-line">${data.type_line}</p>
             <p>${data.oracle_text}</p>
+            ${data.flavor_text ? `<p class="flavor-text">${data.flavor_text}</p>` : ``}
         </section>
-        <section class="legalities">
-            <h2>Legalities</h2>
-            <p class="legality">Standard: <span>${data.legalities.standard}</span></p>
-            <p class="legality">Modern: <span>${data.legalities.modern}</span></p>
-            <p class="legality">Commander: <span>${data.legalities.commander}</span></p>
-            <p class="legality">Legacy: <span>${data.legalities.legacy}</span></p>
-            <p class="legality">Vintage: <span>${data.legalities.vintage}</span></p>
-            <p class="legality">Pauper: <span>${data.legalities.pauper}</span></p>
-            <p class="legality">Historic: <span>${data.legalities.historic}</span></p>
-            <p class="legality">Timeless: <span>${data.legalities.timeless}</span></p>
-            <p class="legality">Oathbreaker: <span>${data.legalities.oathbreaker}</span></p>
-        </section>
+        <div class="single-extras-flex container">
+            <section class="legalities">
+                <h2>Legalities</h2>
+                <p class="legality">Standard: <span class="${data.legalities.standard}">${data.legalities.standard.toUpperCase().replace("_", " ")}</span></p>
+                <p class="legality">Modern: <span class="${data.legalities.modern}">${data.legalities.modern.toUpperCase().replace("_", " ")}</span></p>
+                <p class="legality">Commander: <span class="${data.legalities.commander}">${data.legalities.commander.toUpperCase().replace("_", " ")}</span></p>
+                <p class="legality">Legacy: <span class="${data.legalities.legacy}">${data.legalities.legacy.toUpperCase().replace("_", " ")}</span></p>
+                <p class="legality">Vintage: <span class="${data.legalities.vintage}">${data.legalities.vintage.toUpperCase().replace("_", " ")}</span></p>
+                <p class="legality">Pauper: <span class="${data.legalities.pauper}">${data.legalities.pauper.toUpperCase().replace("_", " ")}</span></p>
+                <p class="legality">Historic: <span class="${data.legalities.historic}">${data.legalities.historic.toUpperCase().replace("_", " ")}</span></p>
+                <p class="legality">Timeless: <span class="${data.legalities.timeless}">${data.legalities.timeless.toUpperCase().replace("_", " ")}</span></p>
+                <p class="legality">Oathbreaker: <span class="${data.legalities.oathbreaker}">${data.legalities.oathbreaker.toUpperCase().replace("_", " ")}</span></p>
+            </section>
+        </div>
     </div></div>`;
-    document.querySelector('#card-info').innerHTML += img + text;
+    document.querySelector('#card-info').innerHTML += text;
 }
 
 setCardInfo(data);

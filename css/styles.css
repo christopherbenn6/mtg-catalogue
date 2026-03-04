@@ -14,14 +14,15 @@
 }
 
 :root {
-    --primary-color: #0F0016;
+    --primary-color: #260037;
     --secondary-color: #D8BD53;
     --secondary-hover: #c0a846;
     --white: #fff;
     --heading-font: 'Rocker', serif;
     --body-font: 'Inria', serif;
-    --success: #83f86b;
-    --danger: #f86b6b;
+    --success: #53cc3a;
+    --danger: #dc2d2d;
+    --grey: #bcbcbc;
 }
 
 body {
@@ -32,7 +33,7 @@ body {
 
 .container {
     margin: 0 auto;
-    max-width: 1400px;
+    max-width: 1200px;
     padding: 0 1rem;
 }
 
@@ -43,6 +44,10 @@ h3,
 h4 {
     font-family: 'Rocker', sans-serif;  
     font-weight: 400;
+}
+
+h1 {
+    font-size: 2rem;
 }
 
 h2 {
@@ -60,7 +65,7 @@ a {
 
 nav {
     background-color: var(--secondary-color);
-    padding: 0.5rem 0;
+    padding: 0.5rem 0
 }
 
 nav a {
@@ -70,30 +75,60 @@ nav a {
 
 .navigation {
     display: flex;
+    flex-wrap: wrap;
     text-align: center;
     align-items: center;
-    gap: 3rem;
     justify-content: center;
 }
+
+.navigation a {
+    flex: 1 1 200px;
+    white-space: nowrap;
+}
+
+.navigation a:nth-of-type(2) {
+    order: -1;
+    flex: 1 1 430px;
+    border-bottom: 1px solid var(--primary-color);
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+
+}
+
+@media (width > 650px) {
+
+   .navigation {
+        gap: 3rem;
+    } 
+
+    .navigation a {
+        flex: unset !important;
+    }
+
+    .navigation a:nth-of-type(2) {
+        order: unset;
+        border-bottom: unset;
+        margin-bottom: 0rem;
+        padding-bottom: 0rem;
+    }
+}
+
 
 .banner {
     text-align: center;
     color: var(--white);
-    padding: 10rem 0;
+    padding: clamp(5rem, 2.5rem + 10vw, 10rem) 0;
 }
 
 .banner h2 {
-    font-size: 6rem;
+    font-size: clamp(2.5rem, 0.75rem + 7vw, 6rem);
 }
 
 .banner p {
-    font-size: 2rem;
+    font-size: clamp(1.5rem, 1.25rem + 1vw, 2rem);
 }
 
 .banner-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 1.25rem;
     padding-top: 1rem;
 }
 
@@ -102,22 +137,33 @@ nav a {
     background-color: var(--secondary-color);
     color: var(--primary-color);
     font-size: 2rem;
-    width: 300px;
+    width: 100%;
     display: block;
     text-decoration: none
-    
+}
+
+.banner-buttons a:first-of-type {
+    margin-bottom: 1rem;
+}
+
+@media (width > 500px) {
+    .banner-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1.25rem;
+    }
+
+    .banner-buttons a {
+        width: 300px;
+    }
+
+    .banner-buttons a:first-of-type {
+        margin: 0;
+    }
 }
 
 .banner-buttons a:hover {
     text-decoration: underline;
-}
-
-.banner-buttons a:first-of-type {
-    border-radius: 16px 0 0 16px;
-}
-
-.banner-buttons a:last-of-type {
-    border-radius: 0 16px 16px 0;
 }
 
 .search {
@@ -130,8 +176,26 @@ nav a {
 
 #card-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(1, 1fr);
     gap: 20px;
+}
+
+@media (width > 500px) {
+    #card-grid  {
+       grid-template-columns: repeat(2, 1fr); 
+    }  
+}
+
+@media (width > 750px) {
+    #card-grid  {
+       grid-template-columns: repeat(3, 1fr); 
+    }
+}
+
+@media (width > 1000px) {
+    #card-grid  {
+       grid-template-columns: repeat(4, 1fr); 
+    }
 }
 
 #card-grid img {
@@ -157,10 +221,8 @@ nav a {
 
 .mtg-card {
     border-radius: 5%;
+    height: auto;
 }
-
-
-
 
 .dropdown-button,
 .clear-button {
@@ -201,6 +263,7 @@ nav a {
     max-height: 0;
     overflow: hidden;
 }
+
 
 .dropdown:not(.hidden) {
     /* Animation */
@@ -259,6 +322,22 @@ nav a {
     flex: 1 1 200px;
 }
 
+.filters > div:first-of-type {
+    z-index: 10;
+}
+
+.filters > div:nth-of-type(2) {
+    z-index: 9;
+}
+
+.filters > div:nth-of-type(3) {
+    z-index: 8;
+}
+
+.filters > div:nth-of-type(4) {
+    z-index: 7;
+}
+
 input {
     width: 100%;
     padding: 0rem 2rem;
@@ -267,65 +346,143 @@ input {
     border: none;
 }
 
-.clear {
-    padding-bottom: 2rem;
-    padding-top: 0.5rem;
-}
-
-.clear button {
-    height: 36px;
-    max-width: 400px;
-    background-color: var(--danger);
-}
-
 #search-submit {
     background-color: var(--success);
-}
-
-.active-filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.active-filter {
-    background-color: var(--secondary-color);
-    color: var(--primary-color);
-    font-family: var(--heading-font);
-    padding: 0.25rem 1rem;
 }
 
 .single-page {
     color: var(--white);
 }
 
-.single-flex {
-    display: flex;
-    gap: 1rem;
-    margin-top: 3rem;
+.big-mtg-card {
+    margin: 1rem auto;
+    max-width: 90%;
 }
 
-.single-flex
+img.container {
+    padding: 0;
+}
+
+.single-banner {
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    padding: 1rem;
+    padding-top: 3rem;
+    corner-shape: bevel;
+    width: 100%;
+}
+
+.single-banner h2 {
+    word-break: break-word;
+    width: 100%;
+}
+
+.single-banner.container {
+    margin: unset;
+    max-width: unset;
+}
+
+.type-line {
+    font-size: 1.5rem;
+    font-family: var(--heading-font);
+}
+
+.flavor-text {
+    font-style: italic;
+    margin-top: 0.5rem;
+}
+
+.single-flex {
+    margin-top: 3rem;
+    align-items: flex-start;
+}
 
 .single-text {
-    margin-top: 2rem;
+    margin-top: -3rem;
+    width:  100%;
+}
+
+.single-extras-flex {
+    display: flex;
+}
+
+.single-extras-flex.container {
+    padding: 0;
+}
+
+.legalities {
+    padding: 0 1rem;
+}
+
+.legalities h2 {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.legal {
+    background-color: var(--success);
+}
+
+.not_legal {
+    background-color: var(--grey);
+}
+
+.restricted {
+    background-color: #FBC02D;
+}
+
+span.banned {
+    background-color: var(--danger);
+    color: white;
 }
 
 .legality {
-    margin-top: 1rem;
     display: flex !important;
+    align-items: center;
+    gap: 2rem;
+    margin-top: 0.25rem;
     justify-content: space-between;
 }
 
 .legality span {
-    background-color: var(--success);
-    padding: 0.25rem;
+    padding: 0.1rem;
     color: black;
-    width: 75px;
+    width: 100px;
     text-align: center;
+    border-radius: 0.5rem;
+    corner-shape: bevel;
+    align-items: center;
+}
+
+@media (width > 900px) {
+    .single-banner{
+        border-radius: 0 1rem 1rem 0;
+        padding-top: 1rem;
+    }
+
+    .single-flex {
+        margin: 3rem auto;
+        max-width: 1200px;
+        padding: 0 1rem;
+    }
+
+    .single-text {
+        margin-top: 2rem;
+    }
+
+    .big-mtg-card {
+        margin: 0 auto;
+        max-width: 40%;
+    }
+
+    .single-flex {
+        padding-left: 2rem;
+        display: flex;
+    }
 }
 
 @media (width > 600px) {
+
     .searchbar {
         width: 100%;
         max-width: 400px;

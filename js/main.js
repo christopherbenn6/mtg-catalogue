@@ -214,7 +214,7 @@ function renderCards(cards, startIndex, endIndex) {
         img.loading = "lazy";
         
         const a = document.createElement('a');
-        a.href = `single.html?id=${cards[i].id}`
+        a.href = `single.html?id=${cards[i].oracle_id}`
         a.appendChild(img);
 
         fragment.appendChild(a);  

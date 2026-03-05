@@ -94,8 +94,7 @@ manaButtons.forEach(manaButton => {
 });
 
 let sortingButtons = document.querySelectorAll('.sorting-mode .dropdown div');
-let selectedSortingOption = document.querySelector('.sorting-mode .dropdown div:first-of-type');
-selectedSortingOption.querySelector('svg').classList.remove('hidden');
+let selectedSortingOption;
 let sortingInput = document.querySelector('#sorting-mode');
 
 sortingButtons.forEach(sortingButton => {
@@ -106,8 +105,10 @@ sortingButtons.forEach(sortingButton => {
             // Svg enabling
             let svg = sortingButton.querySelector('svg');
             svg.classList.remove('hidden');
-            let prevSvg = selectedSortingOption.querySelector('svg');
-            prevSvg.classList.add('hidden');
+            if(selectedSortingOption) {
+                let prevSvg = selectedSortingOption.querySelector('svg');
+                prevSvg.classList.add('hidden');
+            }
 
             selectedSortingOption = sortingButton;
             sortingInput.value = sortingMode;
@@ -116,8 +117,7 @@ sortingButtons.forEach(sortingButton => {
 });
 
 let sortingDirectionButtons = document.querySelectorAll('.sort-direction .dropdown div');
-let selectedSortingDirectionOption = document.querySelector('.sort-direction .dropdown div:first-of-type');
-selectedSortingDirectionOption.querySelector('svg').classList.remove('hidden');
+let selectedSortingDirectionOption;
 let sortingDirectionInput = document.querySelector('#sort-direction');
 
 sortingDirectionButtons.forEach(sortingDirectionButton => {
@@ -128,8 +128,10 @@ sortingDirectionButtons.forEach(sortingDirectionButton => {
             // Svg enabling
             let svg = sortingDirectionButton.querySelector('svg');
             svg.classList.remove('hidden');
-            let prevSvg = selectedSortingDirectionOption.querySelector('svg');
-            prevSvg.classList.add('hidden');
+            if(selectedSortingDirectionOption) {
+                let prevSvg = selectedSortingDirectionOption.querySelector('svg');
+                prevSvg.classList.add('hidden');
+            }
 
             selectedSortingDirectionOption = sortingDirectionButton;
             sortingDirectionInput.value = sortingDirection;
@@ -214,7 +216,7 @@ function renderCards(cards, startIndex, endIndex) {
         img.loading = "lazy";
         
         const a = document.createElement('a');
-        a.href = `single.html?id=${cards[i].oracle_id}`
+        a.href = `single.html?oracle_id=${cards[i].oracle_id}`
         a.appendChild(img);
 
         fragment.appendChild(a);  

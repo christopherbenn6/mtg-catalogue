@@ -14,7 +14,8 @@
 }
 
 :root {
-    --primary-color: #260037;
+    --primary-color: rgb(23, 0, 32);
+    --primary-image: linear-gradient(120deg, rgb(25, 4, 32), rgb(44, 12, 56));
     --secondary-color: #D8BD53;
     --secondary-hover: #c0a846;
     --white: #fff;
@@ -28,7 +29,11 @@
 body {
     font-family: 'Inria', serif;
     color: var(--primary-color);
-    background-color: var(--primary-color);
+    background: var(--primary-image);
+}
+
+main {
+    padding-bottom: 20rem;
 }
 
 .container {
@@ -404,14 +409,17 @@ img.container {
 
 .single-extras-flex {
     display: flex;
+    flex-wrap: wrap;
 }
 
 .single-extras-flex.container {
     padding: 0;
 }
 
+
 .legalities {
     padding: 0 1rem;
+    width: 100%;
 }
 
 .legalities h2 {
@@ -421,40 +429,95 @@ img.container {
 
 .legal {
     background-color: var(--success);
+    font-size: 1rem;
 }
 
 .not_legal {
     background-color: var(--grey);
+    font-size: 1rem;
 }
 
 .restricted {
     background-color: #FBC02D;
+    font-size: 1rem;
 }
 
-span.banned {
+.banned {
     background-color: var(--danger);
     color: white;
+    font-size: 1rem;
 }
 
-.legality {
-    display: flex !important;
-    align-items: center;
-    gap: 2rem;
-    margin-top: 0.25rem;
-    justify-content: space-between;
-}
-
-.legality span {
-    padding: 0.1rem;
-    color: black;
-    width: 100px;
-    text-align: center;
-    border-radius: 0.5rem;
+.legalities-table,
+.prints-table {
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    font-family: var(--heading-font);
     corner-shape: bevel;
-    align-items: center;
+    padding: 1rem;
+    border: 2px solid var(--primary-color);
+    border-collapse: collapse;
+    flex: 1;
+    font-size: 1.25rem;
 }
 
-@media (width > 900px) {
+.legalities-table tr td:last-of-type {
+    padding: 0 2rem;
+}
+
+.prints-table {
+    border-radius: 0 1rem 1rem 0;
+    font-size: 1rem;
+    line-height: 1.875;
+}
+
+.prints-table td {
+    text-align: left !important;
+}
+
+td {
+    padding: 0 0.25rem;
+    border: 2px solid var(--primary-color);
+    width: 100%;
+}
+
+td a {
+    color: var(--primary-color);
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+table {
+    width: 100%;
+}
+
+tr td:last-of-type {
+    text-align: center;
+}
+
+.prints {
+    flex: 1;
+    padding: 0 1rem;
+}
+
+.prints h2 {
+    margin: 1rem 0;
+}
+
+@media (width > 1130px) {
+    table,
+    .legalities {
+        width: unset;
+    }
+
+    .prints {
+        padding: 0;
+    }
+
+    .prints-table {
+        width: 100%;
+    }
     .single-banner{
         border-radius: 0 1rem 1rem 0;
         padding-top: 1rem;
@@ -472,7 +535,7 @@ span.banned {
 
     .big-mtg-card {
         margin: 0 auto;
-        max-width: 40%;
+        max-width: 50%;
     }
 
     .single-flex {

@@ -1,4 +1,4 @@
-import { getPrintsId } from '../js/api.js'
+import { getPrintsByOracleId, getPrintsById } from '../js/api.js'
 
 const params = new URLSearchParams(window.location.search);
 const filters = {};
@@ -7,17 +7,42 @@ for (const [key, value] of params.entries()) {
     filters[key] = value ? decodeURIComponent(value).replace(/\+/g, " ") : null;
 }
 
-const allData = await getPrintsId(filters.id);
-const data = allData.data[0];
-console.log(data);
+let imageData = null
 
-function setCardInfo (data) {
+const allData = await getPrintsByOracleId(filters.oracle_id);
+if(filters.id) {
+    imageData = await getPrintsById(filters.id)
+}
 
+function setCardInfo (allData, imageData = null) {
+
+
+    let data = allData.data[0];
     let image;
-    if (data.card_faces && !data.image_uris) {
-        image = data.card_faces[0].image_uris.normal;
-    } else if (data.image_uris) {
-        image = data.image_uris.normal;
+    if(imageData) {
+        let data = imageData;
+        if (data.card_faces && !data.image_uris) {
+            image = data.card_faces[0].image_uris.normal;
+        } else if (data.image_uris) {
+            image = data.image_uris.normal;
+        }
+    } else {
+        if (data.card_faces && !data.image_uris) {
+            image = data.card_faces[0].image_uris.normal;
+        } else if (data.image_uris) {
+            image = data.image_uris.normal;
+        }
+    }
+
+    let allPrints = "";
+
+    let printCount = allData.total_cards;
+    if(printCount > 9) {{
+        printCount = 9;
+    }}
+    // Only loop a max of 10 times
+    for(let i = 0; i < printCount; i++) {
+        allPrints += `<tr><td><a href="single.html?oracle_id=${allData.data[i].oracle_id}&id=${allData.data[i].id}">${allData.data[i].set_name}<span>&rarr;</span></a></td></tr>`;
     }
 
     const text = `<div class="single-flex"><img src="${image}" class="mtg-card big-mtg-card container"><div class="single-text">
@@ -32,19 +57,88 @@ function setCardInfo (data) {
         <div class="single-extras-flex container">
             <section class="legalities">
                 <h2>Legalities</h2>
-                <p class="legality">Standard: <span class="${data.legalities.standard}">${data.legalities.standard.toUpperCase().replace("_", " ")}</span></p>
-                <p class="legality">Modern: <span class="${data.legalities.modern}">${data.legalities.modern.toUpperCase().replace("_", " ")}</span></p>
-                <p class="legality">Commander: <span class="${data.legalities.commander}">${data.legalities.commander.toUpperCase().replace("_", " ")}</span></p>
-                <p class="legality">Legacy: <span class="${data.legalities.legacy}">${data.legalities.legacy.toUpperCase().replace("_", " ")}</span></p>
-                <p class="legality">Vintage: <span class="${data.legalities.vintage}">${data.legalities.vintage.toUpperCase().replace("_", " ")}</span></p>
-                <p class="legality">Pauper: <span class="${data.legalities.pauper}">${data.legalities.pauper.toUpperCase().replace("_", " ")}</span></p>
-                <p class="legality">Historic: <span class="${data.legalities.historic}">${data.legalities.historic.toUpperCase().replace("_", " ")}</span></p>
-                <p class="legality">Timeless: <span class="${data.legalities.timeless}">${data.legalities.timeless.toUpperCase().replace("_", " ")}</span></p>
-                <p class="legality">Oathbreaker: <span class="${data.legalities.oathbreaker}">${data.legalities.oathbreaker.toUpperCase().replace("_", " ")}</span></p>
+                <table class="legalities-table">
+                    <thead>
+                        <tr>
+                            <th>Format</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Standard</td>
+                            <td class="${data.legalities.standard}">
+                                ${data.legalities.standard.toUpperCase().replace("_", " ")}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Modern</td>
+                            <td class="${data.legalities.modern}">
+                                ${data.legalities.modern.toUpperCase().replace("_", " ")}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Commander</td>
+                            <td class="${data.legalities.commander}">
+                                ${data.legalities.commander.toUpperCase().replace("_", " ")}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Legacy</td>
+                            <td class="${data.legalities.legacy}">
+                                ${data.legalities.legacy.toUpperCase().replace("_", " ")}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Vintage</td>
+                            <td class="${data.legalities.vintage}">
+                                ${data.legalities.vintage.toUpperCase().replace("_", " ")}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Pauper</td>
+                            <td class="${data.legalities.pauper}">
+                                ${data.legalities.pauper.toUpperCase().replace("_", " ")}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Historic</td>
+                            <td class="${data.legalities.historic}">
+                                ${data.legalities.historic.toUpperCase().replace("_", " ")}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Timeless</td>
+                            <td class="${data.legalities.timeless}">
+                                ${data.legalities.timeless.toUpperCase().replace("_", " ")}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Oathbreaker</td>
+                            <td class="${data.legalities.oathbreaker}">
+                                ${data.legalities.oathbreaker.toUpperCase().replace("_", " ")}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+            <section class="prints">
+                <h2>Printings</h2>
+                <table class="prints-table">
+                    <thead>
+                        <tr>
+                            <th>Set Released</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${allPrints}
+                    </tbody>
+                        
+                </table>
             </section>
         </div>
     </div></div>`;
     document.querySelector('#card-info').innerHTML += text;
 }
 
-setCardInfo(data);
+setCardInfo(allData, imageData);

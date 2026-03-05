@@ -9,7 +9,7 @@ const HEADERS = {
     "Accept": "application/json"
 }
 
-function getPrintsId (oracleId) {
+function getPrintsByOracleId (oracleId) {
     const queryString = encodeURIComponent(`oracle_id:${oracleId} include:extras`)+`&unique=prints`;
     const url = `${BASE_API}/cards/search?q=${queryString}`;
     console.log(url)
@@ -22,7 +22,21 @@ function getPrintsId (oracleId) {
         }
         return response.json();
     })
+}
 
+function getPrintsById(id) {
+    const queryString = `${id}`;
+    const url = `${BASE_API}/cards/${queryString}`;
+    console.log(url)
+    return fetch(url, {
+        headers: HEADERS
+    })
+    .then(response => {
+        if(response.status === 404) {
+            return false;
+        }
+        return response.json();
+    })
 }
 
 /**
@@ -32,7 +46,13 @@ function getPrintsId (oracleId) {
  * 
  */
 function filterCards(sortDirection, sorting, params) {
-    let url = `${BASE_API}/cards/search?order=${sorting}&dir=${sortDirection}&q=`;
+    let order = ""
+    if(sorting != null) {
+        order = `order=${sorting}`;
+    } else {
+        order = `order=released`;
+    }
+    let url = `${BASE_API}/cards/search?${order}&dir=${sortDirection}&q=`;
     let filterString = [];
 
     if(params['card-search']) {
@@ -140,4 +160,4 @@ function fetchData(url) {
     })
 }
 
-export { filterCards, fetchData, getPrintsId };
+export { filterCards, fetchData, getPrintsByOracleId, getPrintsById };

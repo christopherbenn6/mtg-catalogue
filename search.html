@@ -29,8 +29,14 @@
                     <div class="top-filters">
                         <h2>Filters</h2>
                             <!-- Searchbar -->
-                        <div class="searchbar">
-                            <input type="text" id="card-search" name="card-search" placeholder="Search">
+                        <div>
+                            <div class="searchbar">
+                                <input type="text" id="card-search" name="card-search" placeholder="Search">
+                            </div>
+                            <!-- Apply Filters -->
+                            <div class="submit-flex-item">
+                                <input class="apply-filters" type="submit" id="search-submit" name="search-submit" value="Apply Filters">
+                            </div>
                         </div>
                     </div>
                     <div class="filters">
@@ -315,10 +321,6 @@
                                 </div>
                             </div>
                             <input type="hidden" name="sort-direction" id="sort-direction" value="desc">
-                        </div>
-                        <!-- Apply Filters -->
-                        <div>
-                            <input class="apply-filters" type="submit" id="search-submit" name="search-submit" value="Apply Filters">
                         </div>
                     </div>
                 </fieldset>

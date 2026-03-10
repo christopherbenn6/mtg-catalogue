@@ -1,4 +1,4 @@
-import { getPrintsByOracleId, getPrintsById } from '../js/api.js'
+import { getPrintsByOracleId, getPrintsById, getAllSymbols } from '../js/api.js'
 
 const params = new URLSearchParams(window.location.search);
 const filters = {};
@@ -9,13 +9,29 @@ for (const [key, value] of params.entries()) {
 
 let imageData = null
 
+// Which Image Info to use (if clicks on different print, it changes to id rather than oracle id)
 const allData = await getPrintsByOracleId(filters.oracle_id);
 if(filters.id) {
     imageData = await getPrintsById(filters.id)
 }
 
-function setCardInfo (allData, imageData = null) {
+// Get all symbols to edit text
+const symbolData = await getAllSymbols();
+console.log(symbolData)
+let symbolImagesAssoc = {};
+symbolData.data.forEach(symbol => {
+    symbolImagesAssoc[symbol.symbol] = symbol.svg_uri;
+});
+console.log(symbolImagesAssoc)
 
+function exchangeWithSymbols(string, symbolImagesAssoc) {
+    Object.entries(symbolImagesAssoc).forEach(([key, value]) => {
+        string = string.replaceAll(key, `<img class="symbol" src="${value}">`)
+    });
+    return string;
+}
+
+function setCardInfo (allData, imageData = null) {
 
     let data = allData.data[0];
     let image;
@@ -40,6 +56,8 @@ function setCardInfo (allData, imageData = null) {
     if(printCount > 9) {{
         printCount = 9;
     }}
+    const printSlotsMissing = 9 - printCount;
+    const printSlotSize = 31;
     // Only loop a max of 10 times
     for(let i = 0; i < printCount; i++) {
         allPrints += `<tr><td><a href="single.html?oracle_id=${allData.data[i].oracle_id}&id=${allData.data[i].id}">${allData.data[i].set_name}<span>&rarr;</span></a></td></tr>`;
@@ -49,10 +67,11 @@ function setCardInfo (allData, imageData = null) {
         <section class="single-banner container">
             <div class="name-line">
                 <h2>${data.name}</h2>
+                <div>${exchangeWithSymbols(data.mana_cost, symbolImagesAssoc)}</div>
             </div>
             <p class="type-line">${data.type_line}</p>
-            <p>${data.oracle_text}</p>
-            ${data.flavor_text ? `<p class="flavor-text">${data.flavor_text}</p>` : ``}
+            <p>${exchangeWithSymbols(data.oracle_text, symbolImagesAssoc)}</p>
+            ${data.flavor_text ? `<p class="flavor-text">${exchangeWithSymbols(data.flavor_text, symbolImagesAssoc)}</p>` : ``}
         </section>
         <div class="single-extras-flex container">
             <section class="legalities">
@@ -132,6 +151,7 @@ function setCardInfo (allData, imageData = null) {
                     </thead>
                     <tbody>
                         ${allPrints}
+                        <tr><td style="height:${printSlotsMissing * printSlotSize}px" class="prints-filler"></td><tr>
                     </tbody>
                         
                 </table>

@@ -9,6 +9,18 @@ const HEADERS = {
     "Accept": "application/json"
 }
 
+function getAllSymbols () {
+    return fetch(`${BASE_API}/symbology`, {
+        headers: HEADERS
+    })
+    .then(response => {
+        if(response.status === 404) {
+            return false;
+        }
+        return response.json();
+    })
+}
+
 function getPrintsByOracleId (oracleId) {
     const queryString = encodeURIComponent(`oracle_id:${oracleId} include:extras`)+`&unique=prints`;
     const url = `${BASE_API}/cards/search?q=${queryString}`;
@@ -160,4 +172,4 @@ function fetchData(url) {
     })
 }
 
-export { filterCards, fetchData, getPrintsByOracleId, getPrintsById };
+export { filterCards, fetchData, getPrintsByOracleId, getPrintsById, getAllSymbols };

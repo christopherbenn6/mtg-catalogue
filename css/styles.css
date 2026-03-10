@@ -18,18 +18,25 @@
     --primary-image: linear-gradient(120deg, rgb(25, 4, 32), rgb(44, 12, 56));
     --secondary-color: #D8BD53;
     --secondary-hover: #c0a846;
+    --ternary-color: #6eddff;
+    --parchment: #f0eace;
     --white: #fff;
     --heading-font: 'Rocker', serif;
     --body-font: 'Inria', serif;
-    --success: #53cc3a;
-    --danger: #dc2d2d;
+    --success: #4CAF50;
+    --danger: #C0392B;
     --grey: #bcbcbc;
+}
+
+html {
+    background: var(--primary-image);
 }
 
 body {
     font-family: 'Inria', serif;
     color: var(--primary-color);
-    background: var(--primary-image);
+    background: url(../img/bg-design.svg) center / contain;
+    background-size: 200vw 200vh;
 }
 
 main {
@@ -56,7 +63,8 @@ h1 {
 }
 
 h2 {
-    font-size: 3rem;
+    font-size: clamp(2rem, 1.8182rem + 0.9091vw, 2.5rem);
+    line-height: 1;
 }
 
 h3 {
@@ -177,6 +185,9 @@ nav a {
 
 .searchbar {
     width: 100%;
+    height: 100%;
+    box-shadow: 0 5px rgb(221, 221, 221);
+    margin-bottom: 0.5rem;
 }
 
 #card-grid {
@@ -229,8 +240,7 @@ nav a {
     height: auto;
 }
 
-.dropdown-button,
-.clear-button {
+.dropdown-button {
     background-color: var(--secondary-color);
     font-family: var(--heading-font);
     font-size: 1.5rem;
@@ -242,7 +252,9 @@ nav a {
     border: none;
     align-items: center;
     line-height: 100%;
-    height: 100%;
+    height:36px;
+    box-shadow: 0 5px var(--secondary-hover);
+    margin-bottom: 0.5rem;
 }
 
 .dropdown-button svg,
@@ -251,13 +263,10 @@ nav a {
 }
 
 .dropdown {
-    background-color: var(--secondary-color);
-    color: var(--primary-color);
+    background-color: rgba(0, 0, 0, 0.897);
+    color: var(--white);
     font-family: var(--heading-font);
     font-size: 1.25rem;
-    position: absolute;
-    top: 100%;
-    left: 0;
     width: 100%; 
     cursor: pointer;
 
@@ -267,6 +276,28 @@ nav a {
         transform 0.25s ease;
     max-height: 0;
     overflow: hidden;
+
+}
+
+@media (width > 1100px) {
+    .dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+    }
+
+    .filters > div {
+        flex: 1 1 200px;
+    }
+
+    .dropdown:not(.hidden) {
+        box-shadow: 0 10px 10px 5px rgba(0, 0, 0, 0.767);
+    }
+}
+
+.filters > div {
+    width: 100%;
 }
 
 
@@ -287,7 +318,9 @@ nav a {
 }
 
 .apply-filters {
-    background-color: var(--secondary-color);
+    background-color: var(--success);
+    box-shadow: 0 5px green;
+    margin-bottom: 0.5rem;
 }
 
 .dropdown div {
@@ -309,6 +342,10 @@ nav a {
     padding-bottom: 3rem;
 }
 
+.search form {
+    padding-bottom: 2rem;
+}
+
 .top-filters {
     margin-bottom: 0.5rem;
     display: flex;
@@ -317,14 +354,21 @@ nav a {
     flex-wrap: wrap;
 }
 
+.top-filters > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.top-filters > div > div {
+    flex: 1 1 150px;
+}
+
 .filters {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-}
-
-.filters > div {
-    flex: 1 1 200px;
 }
 
 .filters > div:first-of-type {
@@ -351,9 +395,6 @@ input {
     border: none;
 }
 
-#search-submit {
-    background-color: var(--success);
-}
 
 .single-page {
     color: var(--white);
@@ -369,7 +410,8 @@ img.container {
 }
 
 .single-banner {
-    background-color: var(--secondary-color);
+    background-color: var(--parchment);
+    box-shadow: 0 5px #d1c8a2;
     color: var(--primary-color);
     padding: 1rem;
     padding-top: 3rem;
@@ -379,7 +421,6 @@ img.container {
 
 .single-banner h2 {
     word-break: break-word;
-    width: 100%;
 }
 
 .single-banner.container {
@@ -388,7 +429,7 @@ img.container {
 }
 
 .type-line {
-    font-size: 1.5rem;
+    font-size: clamp(1.25rem, 1.1591rem + 0.4545vw, 1.5rem);
     font-family: var(--heading-font);
 }
 
@@ -450,12 +491,12 @@ img.container {
 
 .legalities-table,
 .prints-table {
-    background-color: var(--secondary-color);
+    background-color: var(--parchment);
     color: var(--primary-color);
     font-family: var(--heading-font);
     corner-shape: bevel;
     padding: 1rem;
-    border: 2px solid var(--primary-color);
+    border: 1px solid var(--primary-color);
     border-collapse: collapse;
     flex: 1;
     font-size: 1.25rem;
@@ -463,10 +504,10 @@ img.container {
 
 .legalities-table tr td:last-of-type {
     padding: 0 2rem;
+    white-space: nowrap;
 }
 
 .prints-table {
-    border-radius: 0 1rem 1rem 0;
     font-size: 1rem;
     line-height: 1.875;
 }
@@ -477,7 +518,7 @@ img.container {
 
 td {
     padding: 0 0.25rem;
-    border: 2px solid var(--primary-color);
+    border: 1px solid var(--primary-color);
     width: 100%;
 }
 
@@ -501,8 +542,35 @@ tr td:last-of-type {
     padding: 0 1rem;
 }
 
+.prints-filler {
+    background-color: var(--parchment);
+}
+
 .prints h2 {
     margin: 1rem 0;
+}
+
+.symbol {
+    max-width: 1rem;
+    display: inline;
+    padding: 0 0.1rem;
+}
+
+.name-line .symbol {
+    max-width: 2rem;
+    width: 2rem;
+}
+
+.name-line {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.name-line div {
+    align-items: center;
 }
 
 @media (width > 1130px) {

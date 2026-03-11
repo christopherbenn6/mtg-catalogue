@@ -14,7 +14,7 @@
 }
 
 :root {
-    --primary-color: rgb(23, 0, 32);
+    --primary-color: rgb(37, 0, 51);
     --primary-image: linear-gradient(120deg, rgb(25, 4, 32), rgb(44, 12, 56));
     --secondary-color: #D8BD53;
     --secondary-hover: #c0a846;
@@ -33,14 +33,14 @@ html {
 }
 
 .bg-color {
-    background-color: var(--primary-color);
+    background: url(../img/bg-design.svg) center / contain;
+    background-size: 200vw 200vh;
 }
 
 body {
     font-family: 'Inria', serif;
     color: var(--primary-color);
-    background: url(../img/bg-design.svg) center / contain;
-    background-size: 200vw 200vh;
+    background-color: var(--primary-color);
 }
 
 main {

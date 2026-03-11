@@ -19,7 +19,7 @@
     --secondary-color: #D8BD53;
     --secondary-hover: #c0a846;
     --ternary-color: #6eddff;
-    --parchment: #f0eace;
+    --parchment: #f0f0f0;
     --white: #fff;
     --heading-font: 'Rocker', serif;
     --body-font: 'Inria', serif;
@@ -227,7 +227,6 @@ nav a {
     margin: 2rem auto;
     font-family: 'Rocker', sans-serif;  
     font-size: 2rem;
-    border-radius: 1rem;
 }
 
 #load-more:hover {

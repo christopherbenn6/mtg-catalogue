@@ -439,7 +439,6 @@ img.container {
 }
 
 .single-flex {
-    margin-top: 3rem;
     align-items: flex-start;
 }
 
@@ -550,6 +549,15 @@ tr td:last-of-type {
     margin: 1rem 0;
 }
 
+.change-print-button:hover {
+    background-color: var(--primary-color);
+
+}
+
+.change-print-button:hover > a {
+    color: var(--white) !important;
+}
+
 .symbol {
     max-width: 1rem;
     display: inline;
@@ -573,6 +581,19 @@ tr td:last-of-type {
     align-items: center;
 }
 
+.back {
+    background-color: unset;
+    border: none;
+    color: var(--white);
+    font-size: 1.25rem;
+    padding: 3rem 0 1rem 2rem;
+}
+
+.back:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
 @media (width > 1130px) {
     table,
     .legalities {
@@ -592,7 +613,7 @@ tr td:last-of-type {
     }
 
     .single-flex {
-        margin: 3rem auto;
+        margin: 0 auto;
         max-width: 1200px;
         padding: 0 1rem;
     }

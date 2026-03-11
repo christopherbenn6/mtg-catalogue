@@ -60,7 +60,7 @@ function setCardInfo (allData, imageData = null) {
     const printSlotSize = 31;
     // Only loop a max of 10 times
     for(let i = 0; i < printCount; i++) {
-        allPrints += `<tr><td><a href="single.html?oracle_id=${allData.data[i].oracle_id}&id=${allData.data[i].id}">${allData.data[i].set_name}<span>&rarr;</span></a></td></tr>`;
+        allPrints += `<tr><td class="change-print-button"><a href="single.html?oracle_id=${allData.data[i].oracle_id}&id=${allData.data[i].id}">${allData.data[i].set_name}<span>&rarr;</span></a></td></tr>`;
     }
 
     const text = `<div class="single-flex"><img src="${image}" class="mtg-card big-mtg-card container"><div class="single-text">
@@ -160,5 +160,10 @@ function setCardInfo (allData, imageData = null) {
     </div></div>`;
     document.querySelector('#card-info').innerHTML += text;
 }
+
+const backButton = document.querySelector('.back');
+backButton.addEventListener('click', ev => {
+    window.history.back()
+})
 
 setCardInfo(allData, imageData);

@@ -12,15 +12,17 @@ let dropdownButtons = document.querySelectorAll('.dropdown-button');
 dropdownButtons.forEach(button => {
     button.addEventListener('click', (ev) => {
         ev.preventDefault();
-        if(selectedFilterButton != null && selectedFilterButton != button) {
-            const selectedDropdown = selectedFilterButton.nextElementSibling;
-            selectedDropdown.classList.add('hidden');
-            selectedFilterButton.classList.remove('clicked');
-        }
-        const dropdown = button.nextElementSibling;
-        dropdown.classList.toggle('hidden');
-        button.classList.toggle('clicked');
-        selectedFilterButton = button;
+        if(!advancedFiltersAreOpen) {
+            if(selectedFilterButton != null && selectedFilterButton != button) {
+                const selectedDropdown = selectedFilterButton.nextElementSibling;
+                selectedDropdown.classList.add('hidden');
+                selectedFilterButton.classList.remove('clicked');
+            }
+            const dropdown = button.nextElementSibling;
+            dropdown.classList.toggle('hidden');
+            button.classList.toggle('clicked');
+            selectedFilterButton = button;
+        }   
     })
 });
 
@@ -28,7 +30,7 @@ dropdownButtons.forEach(button => {
 let dropdownSelect = document.querySelectorAll('.dropdown:not(.sorting-dropdown) > div');
 dropdownSelect.forEach(select => {
     select.addEventListener('click', () => {
-        select.classList.toggle('selected')
+        select.classList.toggle('selected');
         let svg = select.querySelector('svg');
         svg.classList.toggle('hidden');
     });
@@ -93,6 +95,8 @@ manaButtons.forEach(manaButton => {
     })
 });
 
+
+// Sorting Mode
 let sortingButtons = document.querySelectorAll('.sorting-mode .dropdown div');
 let selectedSortingOption;
 let sortingInput = document.querySelector('#sorting-mode');
@@ -101,7 +105,10 @@ sortingButtons.forEach(sortingButton => {
     sortingButton.addEventListener('click', () => {
         if(sortingButton != selectedSortingOption) {
             let sortingMode = sortingButton.getAttribute('data-value');
-
+            sortingButton.classList.toggle('selected');
+            if(selectedSortingOption != null) {
+                selectedSortingOption.classList.toggle('selected');
+            }
             // Svg enabling
             let svg = sortingButton.querySelector('svg');
             svg.classList.remove('hidden');
@@ -116,6 +123,7 @@ sortingButtons.forEach(sortingButton => {
     })
 });
 
+// Sorting Direction
 let sortingDirectionButtons = document.querySelectorAll('.sort-direction .dropdown div');
 let selectedSortingDirectionOption;
 let sortingDirectionInput = document.querySelector('#sort-direction');
@@ -124,6 +132,12 @@ sortingDirectionButtons.forEach(sortingDirectionButton => {
     sortingDirectionButton.addEventListener('click', () => {
         if(sortingDirectionButton != selectedSortingDirectionOption) {
             let sortingDirection = sortingDirectionButton.getAttribute('data-value');
+
+            // Selected Classes
+            sortingDirectionButton.classList.toggle('selected');
+            if(selectedSortingDirectionOption != null) {
+                selectedSortingDirectionOption.classList.toggle('selected');
+            }
 
             // Svg enabling
             let svg = sortingDirectionButton.querySelector('svg');
@@ -138,6 +152,31 @@ sortingDirectionButtons.forEach(sortingDirectionButton => {
         } 
     })
 });
+
+let advancedFiltersButton = document.querySelector('.advanced-filters-button');
+let advancedFilters = document.querySelector('.advanced-filters');
+let advancedFiltersAreOpen = false;
+advancedFiltersButton.addEventListener('click', () => {
+    advancedFilters.classList.toggle('hidden');
+    if(advancedFiltersAreOpen) {
+        advancedFiltersButton.innerText = 'Advanced Filters';
+        advancedFiltersAreOpen = false;
+    } else {
+        advancedFiltersButton.innerText = 'Basic Filters'
+        advancedFiltersAreOpen = true;
+
+    }
+    dropdownButtons.forEach(button => {
+        const dropdown = button.nextElementSibling;
+        if(advancedFiltersAreOpen) {
+            button.classList.add('clicked');
+            dropdown.classList.remove('hidden');
+        } else {
+            button.classList.remove('clicked');
+            dropdown.classList.add('hidden');
+        }
+    })
+})
 
 async function loadCardArray(filterObject) {
     // Initial fetch
@@ -162,6 +201,9 @@ async function loadCardArray(filterObject) {
         // Add it 
         cardGrid.appendChild(h2);
         cardGrid.appendChild(p);
+
+        // Change Styling
+        cardGrid.classList.add('no-results')
     }
 }
 
@@ -255,8 +297,13 @@ function filterObject() {
         "mintoughness": null,
         "maxtoughness": null,
         "minloyalty": null,
-        "maxloyalty": null
+        "maxloyalty": null,
+        "card-face": null,
+        "other-card-types": null,
+        "gimmick": null
     };
 }
+
+console.log(filterObject());
 
 loadCardArray(filterObject());

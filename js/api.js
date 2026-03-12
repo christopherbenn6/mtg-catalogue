@@ -64,6 +64,9 @@ function filterCards(sortDirection, sorting, params) {
     } else {
         order = `order=released`;
     }
+    if(sortDirection == null) {
+        sortDirection = "desc";
+    }
     let url = `${BASE_API}/cards/search?${order}&dir=${sortDirection}&q=`;
     let filterString = [];
 
@@ -73,7 +76,7 @@ function filterCards(sortDirection, sorting, params) {
     }
 
     if(params['color']) {
-        filterString.push(`ci=${params['color']} -c=c`);
+        filterString.push(`ci=${params['color']} -id:c`);
     }
 
     if(params['mana-value']) {

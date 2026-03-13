@@ -67,7 +67,7 @@ function filterCards(sortDirection, sorting, params) {
     if(sortDirection == null) {
         sortDirection = "desc";
     }
-    let url = `${BASE_API}/cards/search?${order}&dir=${sortDirection}&q=`;
+    let url = `${BASE_API}/cards/search?${order}&dir=${sortDirection}`;
     let filterString = [];
 
     if(params['card-search']) {
@@ -105,18 +105,48 @@ function filterCards(sortDirection, sorting, params) {
         filterString.push(cardTypeFilters.join(' '));
     }
 
-    // Card Rarity ex. common, rare, mythic
+    // Gimmick
+    if(params['gimmick']) {
+        let gimmicks = params['gimmick'].split('-');
+        let gimmickFilters = [];
+        gimmicks.forEach(gimmick => {
+            if(gimmick == 'funny') {
+                gimmickFilters.push(`is:funny`);
+            } else {
+                gimmickFilters.push(`type:${gimmick}`);
+            }
+        });
+        filterString.push(`(${gimmickFilters.join(' or ')})`);
+    }
+
+    // Border
+    if(params['border']) {
+        let borders = params['border'].split('-');
+        let borderFilters = [];
+        borders.forEach(border => {
+            borderFilters.push(`border:${border}`);
+        });
+        filterString.push(`(${borderFilters.join(' or ')})`);
+    }
+
     if(params['rarity']) {
-        filterString.push(`rarity:${params['rarity']}`);
+        let rarities = params['rarity'].split('-');
+        let rarityFilters = [];
+        rarities.forEach(rarity => {
+            rarityFilters.push(`r:${rarity}`);
+        });
+        filterString.push(`(${rarityFilters.join(' or ')})`);
     }
 
     // Format Legality
-    if(params['legalty']) {
-        filterString.push(`f:${params['legalty']}`);
-    } else {
-        // If nothing specified, use vintage cards
-        filterString.push(`f:vintage`); 
-    }
+    if(params['legality']) {
+        let legalities = params['legality'].split('-');
+        let legalityFilters = [];
+        legalities.forEach(legality => {
+            legalityFilters.push(`f:${legality}`);
+        });
+        filterString.push(`(${legalityFilters.join(' or ')})`);
+    } 
 
     if(params['minyear']) {
         filterString.push(`year>=${params['minyear']}`);
@@ -126,28 +156,12 @@ function filterCards(sortDirection, sorting, params) {
         filterString.push(`year<=${params['maxyear']}`);
     }
 
-    if(params['minpower']) {
-        filterString.push(`pow>=${params['minpower']}`);
-    }
+    console.log(filterString)
 
-    if(params['maxpower']) {
-        filterString.push(`pow<=${params['maxpower']}`);
-    }
-
-    if(params['mintoughness']) {
-        filterString.push(`tou>=${params['mintoughness']}`);
-    }
-
-    if(params['maxtoughness']) {
-        filterString.push(`tou<=${params['maxtoughness']}`);
-    }
-
-    if(params['minloyalty']) {
-        filterString.push(`loy>=${params['minloyalty']}`);
-    }
-
-    if(params['maxloyalty']) {
-        filterString.push(`loy<=${params['maxloyalty']}`);
+    if(filterString.length > 0) {
+        url += `&q=`;
+    } else {
+        url += `&q=mv>=0`
     }
 
     url += encodeURIComponent(filterString.join(" "));

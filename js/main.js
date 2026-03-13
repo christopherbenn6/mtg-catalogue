@@ -32,7 +32,9 @@ dropdownSelect.forEach(select => {
     select.addEventListener('click', () => {
         select.classList.toggle('selected');
         let svg = select.querySelector('svg');
-        svg.classList.toggle('hidden');
+        if(svg !=  null) {
+            svg.classList.toggle('hidden');
+        }
     });
 });
 
@@ -94,7 +96,6 @@ manaButtons.forEach(manaButton => {
         manaInput.value = manaValuesString;
     })
 });
-
 
 // Sorting Mode
 let sortingButtons = document.querySelectorAll('.sorting-mode .dropdown div');
@@ -176,7 +177,159 @@ advancedFiltersButton.addEventListener('click', () => {
             dropdown.classList.add('hidden');
         }
     })
-})
+});
+
+// Card Faces
+let cardFaceButtons = document.querySelectorAll('.card-faces .dropdown div');
+let cardFaceInput = document.querySelector('#card-face');
+let cardFaces = [];
+
+cardFaceButtons.forEach(cardFaceButton => {
+    cardFaceButton.addEventListener('click', () => {
+        let cardFaceValue = cardFaceButton.getAttribute('data-value');
+        if(cardFaces.includes(cardFaceValue)) {
+            // 1 means remove only the first
+            cardFaces.splice(cardFaces.indexOf(cardFaceValue), 1)
+        } else {
+            cardFaces.push(cardFaceValue);
+        }
+        let string = cardFaces.join('-')
+        cardFaceInput.value = string;
+    })
+});
+
+// Other Card Types
+let otherCardTypeButtons = document.querySelectorAll('.other-card-types .dropdown div');
+let otherCardTypeInput = document.querySelector('#other-card-types');
+let otherCardTypes = [];
+
+otherCardTypeButtons.forEach(otherCardTypeButton => {
+    otherCardTypeButton.addEventListener('click', () => {
+        let otherCardTypeValue = otherCardTypeButton.getAttribute('data-value');
+        if(otherCardTypes.includes(otherCardTypeValue)) {
+            // 1 means remove only the first
+            otherCardTypes.splice(otherCardTypes.indexOf(otherCardTypeValue), 1)
+        } else {
+            otherCardTypes.push(otherCardTypeValue);
+        }
+        let string = otherCardTypes.join('-')
+        otherCardTypeInput.value = string;
+    })
+});
+
+// Gimmicks
+let gimmickButtons = document.querySelectorAll('.gimmick .dropdown div');
+let gimmickInput = document.querySelector('#gimmick');
+let gimmicks = [];
+
+gimmickButtons.forEach(gimmickButton => {
+    gimmickButton.addEventListener('click', () => {
+        let gimmickValue = gimmickButton.getAttribute('data-value');
+        if(gimmicks.includes(gimmickValue)) {
+            // 1 means remove only the first
+            gimmicks.splice(gimmicks.indexOf(gimmickValue), 1)
+        } else {
+            gimmicks.push(gimmickValue);
+        }
+        let string = gimmicks.join('-')
+        gimmickInput.value = string;
+    })
+});
+
+// Rarity
+let rarityButtons = document.querySelectorAll('.rarity .dropdown div');
+let rarityInput = document.querySelector('#rarity');
+let rarities = [];
+
+rarityButtons.forEach(rarityButton => {
+    rarityButton.addEventListener('click', () => {
+        let rarityValue = rarityButton.getAttribute('data-value');
+        if(rarities.includes(rarityValue)) {
+            // 1 means remove only the first
+            rarities.splice(rarities.indexOf(rarityValue), 1)
+        } else {
+            rarities.push(rarityValue);
+        }
+        let string = rarities.join('-')
+        rarityInput.value = string;
+    })
+});
+
+// Border
+let borderButtons = document.querySelectorAll('.border .dropdown div');
+let borderInput = document.querySelector('#border');
+let borders = [];
+
+borderButtons.forEach(borderButton => {
+    borderButton.addEventListener('click', () => {
+        let borderValue = borderButton.getAttribute('data-value');
+        if(borders.includes(borderValue)) {
+            // 1 means remove only the first
+            borders.splice(borders.indexOf(borderValue), 1)
+        } else {
+            borders.push(borderValue);
+        }
+        let string = borders.join('-')
+        borderInput.value = string;
+    })
+});
+
+// Legality
+let legalityButtons = document.querySelectorAll('.legality .dropdown div');
+let legalityInput = document.querySelector('#legality');
+let legalities = [];
+
+legalityButtons.forEach(legalityButton => {
+    legalityButton.addEventListener('click', () => {
+        let legalityValue = legalityButton.getAttribute('data-value');
+        if(legalities.includes(legalityValue)) {
+            // 1 means remove only the first
+            legalities.splice(legalities.indexOf(legalityValue), 1)
+        } else {
+            legalities.push(legalityValue);
+        }
+        let string = legalities.join('-')
+        legalityInput.value = string;
+    })
+});
+
+// Power
+let powerButtons = document.querySelectorAll('.power .dropdown div');
+let powerInput = document.querySelector('#power');
+let powers = [];
+
+powerButtons.forEach(powerButton => {
+    powerButton.addEventListener('click', () => {
+        let powerValue = powerButton.getAttribute('data-value');
+        if(powers.includes(powerValue)) {
+            // 1 means remove only the first
+            powers.splice(powers.indexOf(powerValue), 1)
+        } else {
+            powers.push(powerValue);
+        }
+        let string = powers.join('-')
+        powerInput.value = string;
+    })
+});
+
+// Toughness
+let toughnessButtons = document.querySelectorAll('.toughness .dropdown div');
+let toughnessInput = document.querySelector('#toughness');
+let toughnesses = [];
+
+toughnessButtons.forEach(toughnessButton => {
+    toughnessButton.addEventListener('click', () => {
+        let toughnessValue = toughnessButton.getAttribute('data-value');
+        if(toughnesses.includes(toughnessValue)) {
+            // 1 means remove only the first
+            toughnesses.splice(toughnesses.indexOf(toughnessValue), 1)
+        } else {
+            toughnesses.push(toughnessValue);
+        }
+        let string = toughnesses.join('-')
+        toughnessInput.value = string;
+    })
+});
 
 async function loadCardArray(filterObject) {
     // Initial fetch
@@ -289,18 +442,17 @@ function filterObject() {
         "mana-value": null,
         "card-type": null,
         "rarity": null,
-        "legalty": "vintage",
-        "minyear": null,
-        "maxyear": null,
-        "minpower": null,
-        "maxpower": null,
-        "mintoughness": null,
-        "maxtoughness": null,
-        "minloyalty": null,
-        "maxloyalty": null,
+        "legalty": null,
+        "power": null,
+        "toughness": null,
         "card-face": null,
         "other-card-types": null,
-        "gimmick": null
+        "gimmick": null,
+        "border": null,
+        "price-min": null,
+        "price-max": null,
+        "year-max": null,
+        "year-min": null
     };
 }
 

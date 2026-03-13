@@ -187,11 +187,21 @@ nav a {
     color: var(--white);
 }
 
-.searchbar {
+.searchbar:not(.price) {
     width: 100%;
     height: 100%;
     box-shadow: 0 5px rgb(221, 221, 221);
     margin-bottom: 0.5rem;
+}
+
+.price {
+    display: block;
+    padding: 0 !important;
+    margin-bottom: 1rem;
+}
+
+.dropdown:has(label) {
+    padding: 1rem;
 }
 
 #card-grid {

@@ -23,6 +23,7 @@ dropdownButtons.forEach(button => {
             button.classList.toggle('clicked');
             selectedFilterButton = button;
         }   
+        button.blur();
     })
 });
 

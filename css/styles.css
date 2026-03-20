@@ -273,7 +273,7 @@ nav a {
 
 .dropdown-button svg,
 .dropdown svg {
-    max-width: 1.5rem;
+    width: 1.5rem;
     color: var(--primary-color);
 }
 

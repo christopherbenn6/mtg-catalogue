@@ -105,6 +105,26 @@ function filterCards(sortDirection, sorting, params) {
         filterString.push(cardTypeFilters.join(' '));
     }
 
+    // Flip / Transform / Meld / Split
+    if(params['card-face']) {
+        let cardFaces = params['card-face'].split('-');
+        let cardFaceFilters = [];
+        cardFaces.forEach(cardFace => {
+            cardFaceFilters.push(`is:${cardFace}`);
+        });
+        filterString.push(`(${cardFaceFilters.join(' or ')})`);
+    }
+
+    // Other Card Types 
+    if(params['other-card-types']) {
+        let otherCardTypes = params['other-card-types'].split('-');
+        let otherCardTypeFilters = [];
+        otherCardTypes.forEach(otherCardType => {
+            otherCardTypeFilters.push(`is:${otherCardType}`);
+        });
+        filterString.push(otherCardTypeFilters.join(' '));
+    }
+
     // Gimmick
     if(params['gimmick']) {
         let gimmicks = params['gimmick'].split('-');
@@ -148,15 +168,47 @@ function filterCards(sortDirection, sorting, params) {
         filterString.push(`(${legalityFilters.join(' or ')})`);
     } 
 
-    if(params['minyear']) {
-        filterString.push(`year>=${params['minyear']}`);
-    }
-    
-    if(params['maxyear']) {
-        filterString.push(`year<=${params['maxyear']}`);
+    if(params['power']) {
+        let powers = params['power'].split('-');
+        let powerFilters = [];
+        powers.forEach(power => {
+            if(power >= 8) {
+                powerFilters.push(`pow>=${power}`);
+            } else {
+                powerFilters.push(`pow=${power}`);  
+            }
+        });
+        filterString.push(`(${powerFilters.join(' or ')})`);
     }
 
-    console.log(filterString)
+    if(params['toughness']) {
+        let toughnesses = params['toughness'].split('-');
+        let toughnessFilters = [];
+        toughnesses.forEach(toughness => {
+            if(power >= 8) {
+                toughnessFilters.push(`pow>=${toughness}`);
+            } else {
+                toughnessFilters.push(`pow=${toughness}`);  
+            }
+        });
+        filterString.push(`(${toughnessFilters.join(' or ')})`);
+    }
+
+    if(params['price-min']) {
+        filterString.push(`usd>=${params['price-min']}`);
+    }
+
+    if(params['price-max']) {
+        filterString.push(`usd<=${params['price-max']}`);
+    }
+
+    if(params['year-min']) {
+        filterString.push(`year>=${params['year-min']}`);
+    }
+    
+    if(params['year-max']) {
+        filterString.push(`year<=${params['year-max']}`);
+    }
 
     if(filterString.length > 0) {
         url += `&q=`;

@@ -28,19 +28,19 @@
     --grey: #bcbcbc;
 }
 
-html {
-    background-color: var(--secondary-color);
+.bg-design {
+    background: url(../img/bg-design.svg) center / contain;
+    background-size: 200vw 200vh;
 }
 
 .bg-color {
-    background: url(../img/bg-design.svg) center / contain;
-    background-size: 200vw 200vh;
+    background-color: var(--primary-color);
 }
 
 body {
     font-family: 'Inria', serif;
     color: var(--primary-color);
-    background-color: var(--primary-color);
+    background-color: var(--secondary-color);
 }
 
 main {

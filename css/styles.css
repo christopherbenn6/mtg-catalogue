@@ -275,7 +275,7 @@ nav a {
 .dropdown-button svg,
 .dropdown svg {
     width: 1.5rem;
-
+    transition: all 0.5s ease;
 }
 
 .dropdown-button svg {
@@ -284,10 +284,6 @@ nav a {
 
 .dropdown svg {
     color: var(--white);
-}
-
-.dropdown-button svg path {
-    color: var(--primary-color);
 }
 
 .dropdown {
@@ -410,21 +406,40 @@ nav a {
     box-shadow: 0 5px #3891ac;
     margin-bottom: 0.5rem;
     white-space: nowrap;
+    min-width: 270px;
+}
+
+.dropdown div,
+.dropdown-button,
+.clear-filters,
+.selected,
+.apply-filters,
+.advanced-filters-button,
+.dropdown-button.clicked {
+    transition: all 0.3s ease;
 }
 
 .dropdown div:hover,
 .dropdown-button:hover,
 .clear-filters:hover,
 .selected,
+.filters:not(:has(.advanced-filters:not(.hidden))) .dropdown-button.clicked,
 .apply-filters:hover,
 .advanced-filters-button:hover {
     background-color: var(--black);
     box-shadow: 0 5px var(--grey);
     color: var(--white);
     border: 1px solid var(--white) !important;
-    svg {
-        color: var(--white);
-    }
+}
+
+.dropdown div svg,
+.dropdown-button:hover svg,
+.dropdown-button.clicked svg {
+    color: var(--white);
+}
+
+.dropdown-button.clicked svg {
+    transform: rotate(270deg);
 }
 
 .dropdown div:hover,

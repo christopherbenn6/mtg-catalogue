@@ -21,6 +21,7 @@
     --ternary-color: #6eddff;
     --parchment: #f0f0f0;
     --white: #fff;
+    --black: #000;
     --heading-font: 'Rocker', serif;
     --body-font: 'Inria', serif;
     --success: #4CAF50;
@@ -274,7 +275,15 @@ nav a {
 .dropdown-button svg,
 .dropdown svg {
     width: 1.5rem;
+
+}
+
+.dropdown-button svg {
     color: var(--primary-color);
+}
+
+.dropdown svg {
+    color: var(--white);
 }
 
 .dropdown-button svg path {
@@ -375,22 +384,12 @@ nav a {
     border: 1px solid rgba(0, 0, 0, 0.897);
 }
 
-.dropdown div:hover,
-.dropdown-button:hover,
-.clear-filters:hover,
-.selected,
-.apply-filters:hover,
-.advanced-filters-button:hover {
-    background-color: var(--primary-color);
-    color: var(--white);
-    border: 1px solid var(--white) !important;
-}
-
 .apply-filters {
     background-color: var(--success);
     box-shadow: 0 5px green;
     margin-bottom: 0.5rem;
     color: var(--primary-color);
+    border: 1px solid var(--success);
 }
 
 .clear-filters {
@@ -411,6 +410,26 @@ nav a {
     box-shadow: 0 5px #3891ac;
     margin-bottom: 0.5rem;
     white-space: nowrap;
+}
+
+.dropdown div:hover,
+.dropdown-button:hover,
+.clear-filters:hover,
+.selected,
+.apply-filters:hover,
+.advanced-filters-button:hover {
+    background-color: var(--black);
+    box-shadow: 0 5px var(--grey);
+    color: var(--white);
+    border: 1px solid var(--white) !important;
+    svg {
+        color: var(--white);
+    }
+}
+
+.dropdown div:hover,
+.selected {
+    box-shadow: 0 3px var(--grey);
 }
 
 .select {
@@ -492,6 +511,10 @@ input,
     padding: 0rem 2rem;
     font-family: var(--heading-font) !important;
     font-size: 1.5rem !important;
+}
+
+input,
+.clear-filters {
     border: none;
 }
 

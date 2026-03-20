@@ -25,7 +25,6 @@ if(filters.transform == "true") {
 
 // Get all symbols to edit text
 const symbolData = await getAllSymbols();
-console.log(symbolData)
 let symbolImagesAssoc = {};
 symbolData.data.forEach(symbol => {
     symbolImagesAssoc[symbol.symbol] = symbol.svg_uri;
@@ -64,7 +63,8 @@ function setCardInfo (allData, imageData = null) {
     // Flip Card
     let flipButton = "";
     if(isFlipCard) {
-        let transformURL = `single.html?oracle_id=${allData.data.oracle_id}`;
+        console.log(allData.data)
+        let transformURL = `single.html?oracle_id=${allData.data[transformFace].oracle_id}`;
         if(filters.id) {
             transformURL += `&id=${allData.data.card_faces[transformFace].id}`;
         }

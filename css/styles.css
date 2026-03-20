@@ -756,6 +756,14 @@ tr td:last-of-type {
     cursor: pointer;
 }
 
+.flip-button svg {
+    max-width: 3rem;
+    background-color: rgba(255, 255, 255, 0.363);
+    color: var(--black);
+    border-radius: 100%;
+    padding: 0.25rem;
+}
+
 @media (width > 1130px) {
     table,
     .legalities {

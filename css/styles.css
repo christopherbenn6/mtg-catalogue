@@ -756,6 +756,16 @@ tr td:last-of-type {
     cursor: pointer;
 }
 
+.flip-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.flip-button-container {
+    position: relative;
+}
+
 .flip-button svg {
     max-width: 3rem;
     background-color: rgba(255, 255, 255, 0.363);

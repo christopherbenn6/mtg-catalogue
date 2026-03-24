@@ -3,7 +3,6 @@ import { filterCards, fetchData } from '../js/api.js';
 let maxNumberOfCards = 80;
 const cardIncrement = 80;
 let cardData; // store all loaded cards and next_page
-let activeFilters = [];
 
 let selectedFilterButton = null;
 
@@ -42,17 +41,20 @@ dropdownSelect.forEach(select => {
 // Color Selection
 let colorButtons = document.querySelectorAll('.color .dropdown div');
 let colorInput = document.querySelector('#color')
-let colors = "";
+// Initialize it to previous settings
+let colors = filterObject()['color'] ? filterObject()['color'].split("-") : [];
 
 colorButtons.forEach(colorButton => {
     colorButton.addEventListener('click', () => {
         let color = colorButton.getAttribute('data-value');
         if(colors.includes(color)) {
-            colors = colors.replace(color, "");
+            // 1 means remove only the first
+            colors.splice(colors.indexOf(color), 1)
         } else {
-            colors = colors + color;
+            colors.push(color);
         }
-        colorInput.value = colors;
+        let colorString = colors.join('-');
+        colorInput.value = colorString;
     })
 });
 
@@ -61,7 +63,7 @@ let typeButtons = document.querySelectorAll('.card-type .dropdown div');
 let typeInput = document.querySelector('#card-type')
 
 // Types as an array thats converted to a string later
-let types = [];
+let types = filterObject()['card-type'] ? filterObject()['card-type'].split("-") : [];
 
 typeButtons.forEach(typeButton => {
     typeButton.addEventListener('click', () => {
@@ -82,7 +84,7 @@ let manaButtons = document.querySelectorAll('.mana-value .dropdown div');
 let manaInput = document.querySelector('#mana-value');
 
 // Mana values as an array thats converted to a string later
-let manaValues = [];
+let manaValues = filterObject()['mana-value'] ? filterObject()['mana-value'].split("-") : [];
 
 manaButtons.forEach(manaButton => {
     manaButton.addEventListener('click', () => {
@@ -155,6 +157,7 @@ sortingDirectionButtons.forEach(sortingDirectionButton => {
     })
 });
 
+// Advanced / Basic Filter Button
 let advancedFiltersButton = document.querySelector('.advanced-filters-button');
 let advancedFilters = document.querySelector('.advanced-filters');
 let advancedFiltersAreOpen = false;
@@ -183,7 +186,7 @@ advancedFiltersButton.addEventListener('click', () => {
 // Card Faces
 let cardFaceButtons = document.querySelectorAll('.card-faces .dropdown div');
 let cardFaceInput = document.querySelector('#card-face');
-let cardFaces = [];
+let cardFaces = filterObject()['card-faces'] ? filterObject()['card-faces'].split("-") : [];
 
 cardFaceButtons.forEach(cardFaceButton => {
     cardFaceButton.addEventListener('click', () => {
@@ -202,7 +205,7 @@ cardFaceButtons.forEach(cardFaceButton => {
 // Other Card Types
 let otherCardTypeButtons = document.querySelectorAll('.other-card-types .dropdown div');
 let otherCardTypeInput = document.querySelector('#other-card-types');
-let otherCardTypes = [];
+let otherCardTypes = filterObject()['other-card-types'] ? filterObject()['other-card-types'].split("-") : [];
 
 otherCardTypeButtons.forEach(otherCardTypeButton => {
     otherCardTypeButton.addEventListener('click', () => {
@@ -221,7 +224,7 @@ otherCardTypeButtons.forEach(otherCardTypeButton => {
 // Gimmicks
 let gimmickButtons = document.querySelectorAll('.gimmick .dropdown div');
 let gimmickInput = document.querySelector('#gimmick');
-let gimmicks = [];
+let gimmicks = filterObject()['gimmick'] ? filterObject()['gimmick'].split("-") : [];
 
 gimmickButtons.forEach(gimmickButton => {
     gimmickButton.addEventListener('click', () => {
@@ -240,7 +243,7 @@ gimmickButtons.forEach(gimmickButton => {
 // Rarity
 let rarityButtons = document.querySelectorAll('.rarity .dropdown div');
 let rarityInput = document.querySelector('#rarity');
-let rarities = [];
+let rarities = filterObject()['rarity'] ? filterObject()['rarity'].split("-") : [];
 
 rarityButtons.forEach(rarityButton => {
     rarityButton.addEventListener('click', () => {
@@ -259,7 +262,7 @@ rarityButtons.forEach(rarityButton => {
 // Border
 let borderButtons = document.querySelectorAll('.border .dropdown div');
 let borderInput = document.querySelector('#border');
-let borders = [];
+let borders = filterObject()['border'] ? filterObject()['border'].split("-") : [];
 
 borderButtons.forEach(borderButton => {
     borderButton.addEventListener('click', () => {
@@ -278,7 +281,7 @@ borderButtons.forEach(borderButton => {
 // Legality
 let legalityButtons = document.querySelectorAll('.legality .dropdown div');
 let legalityInput = document.querySelector('#legality');
-let legalities = [];
+let legalities = filterObject()['legality'] ? filterObject()['legality'].split("-") : [];
 
 legalityButtons.forEach(legalityButton => {
     legalityButton.addEventListener('click', () => {
@@ -297,7 +300,7 @@ legalityButtons.forEach(legalityButton => {
 // Power
 let powerButtons = document.querySelectorAll('.power .dropdown div');
 let powerInput = document.querySelector('#power');
-let powers = [];
+let powers = filterObject()['power'] ? filterObject()['power'].split("-") : [];
 
 powerButtons.forEach(powerButton => {
     powerButton.addEventListener('click', () => {
@@ -316,7 +319,7 @@ powerButtons.forEach(powerButton => {
 // Toughness
 let toughnessButtons = document.querySelectorAll('.toughness .dropdown div');
 let toughnessInput = document.querySelector('#toughness');
-let toughnesses = [];
+let toughnesses = filterObject()['toughness'] ? filterObject()['toughness'].split("-") : [];
 
 toughnessButtons.forEach(toughnessButton => {
     toughnessButton.addEventListener('click', () => {
@@ -456,6 +459,31 @@ function filterObject() {
         "year-min": null
     };
 }
+
+function setStickyFilters () {
+    let filters = filterObject();
+    Object.entries(filters).forEach(([filter, value]) => {
+        if(value != null && value != "Apply Filters") {
+            let input = document.querySelector(`#${filter}`);
+            input.value = value;
+            if(filter == "card-search") {
+                return;
+            }
+
+            let valuesArray = value.split("-");
+            valuesArray.forEach(dataValue => {
+                let select = document.querySelector(`[data-value="${dataValue}"]`);
+                select.classList.toggle('selected');
+                let svg = select.querySelector('svg');
+                if(svg !=  null) {
+                    svg.classList.toggle('hidden');
+                }
+            });
+        }
+    });
+}
+
+setStickyFilters();
 
 console.log(filterObject());
 

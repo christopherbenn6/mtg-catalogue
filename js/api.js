@@ -39,7 +39,6 @@ function getPrintsByOracleId (oracleId) {
 function getPrintsById(id) {
     const queryString = `${id}`;
     const url = `${BASE_API}/cards/${queryString}`;
-    console.log(url)
     return fetch(url, {
         headers: HEADERS
     })
@@ -76,7 +75,12 @@ function filterCards(sortDirection, sorting, params) {
     }
 
     if(params['color']) {
-        filterString.push(`ci=${params['color']} -id:c`);
+        let colors = params['color'].split('-');
+        let colorFilters = "";
+        colors.forEach(color => {
+            colorFilters += color;
+        });
+        filterString.push(`ci=${colorFilters} -id:c`);
     }
 
     if(params['mana-value']) {

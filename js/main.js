@@ -102,7 +102,7 @@ manaButtons.forEach(manaButton => {
 
 // Sorting Mode
 let sortingButtons = document.querySelectorAll('.sorting-mode .dropdown div');
-let selectedSortingOption;
+let selectedSortingOption = document.querySelector(`[data-value="${filterObject()['sorting-mode']}"]`) ?? null;
 let sortingInput = document.querySelector('#sorting-mode');
 
 sortingButtons.forEach(sortingButton => {

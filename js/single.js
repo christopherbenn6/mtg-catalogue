@@ -95,7 +95,7 @@ function setCardInfo (allData, imageData = null) {
         allPrints += `<tr><td class="change-print-button"><a href="single.html?oracle_id=${allData.data[i].oracle_id}&id=${allData.data[i].id}">${allData.data[i].set_name}<span>&rarr;</span></a></td></tr>`;
     }
 
-    const text = `<div class="single-flex"><div class="flip-button-container container">${flipButton}<img src="${image}" class="mtg-card big-mtg-card container"></div><div class="single-text">
+    const text = `<div class="single-flex"><div class="flip-button-container container">${flipButton}<img src="${image}" class="mtg-card big-mtg-card"></div><div class="single-text">
         <section class="single-banner container">
             <div class="name-line">
                 <h2>${data.name}</h2>

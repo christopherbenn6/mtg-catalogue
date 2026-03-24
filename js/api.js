@@ -71,7 +71,7 @@ function filterCards(sortDirection, sorting, params) {
 
     if(params['card-search']) {
         let searchTerm = params['card-search'];
-        filterString.push(`(o:${searchTerm} or t:${searchTerm} or name:${searchTerm})`)
+        filterString.push(`(o:"${searchTerm}" or t:${searchTerm} or name:${searchTerm})`)
     }
 
     if(params['color']) {

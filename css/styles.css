@@ -803,10 +803,19 @@ tr td:last-of-type {
     }
 
     .big-mtg-card {
-        margin: 0 auto;
-        max-width: 50%;
+        margin: 0;
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
     }
 
+    .flip-button-container  {
+        width: 60%;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+    }
+    
     .single-flex {
         padding-left: 2rem;
         display: flex;

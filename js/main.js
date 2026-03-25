@@ -186,7 +186,7 @@ advancedFiltersButton.addEventListener('click', () => {
 // Card Faces
 let cardFaceButtons = document.querySelectorAll('.card-faces .dropdown div');
 let cardFaceInput = document.querySelector('#card-face');
-let cardFaces = filterObject()['card-faces'] ? filterObject()['card-faces'].split("-") : [];
+let cardFaces = filterObject()['card-face'] ? filterObject()['card-face'].split("-") : [];
 
 cardFaceButtons.forEach(cardFaceButton => {
     cardFaceButton.addEventListener('click', () => {
@@ -415,7 +415,7 @@ function renderCards(cards, startIndex, endIndex) {
         img.loading = "lazy";
         
         const a = document.createElement('a');
-        a.href = `single.html?oracle_id=${cards[i].oracle_id}`
+        a.href = `single.html?id=${cards[i].id}`
         a.appendChild(img);
 
         fragment.appendChild(a);  
@@ -466,7 +466,7 @@ function setStickyFilters () {
         if(value != null && value != "Apply Filters") {
             let input = document.querySelector(`#${filter}`);
             input.value = value;
-            if(filter == "card-search") {
+            if(filter == "card-search" || filter == "price-min" || filter == "price-max" || filter == "year-min" || filter == "year-max") {
                 return;
             }
 

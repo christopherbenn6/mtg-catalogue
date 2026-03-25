@@ -24,7 +24,7 @@ function getAllSymbols () {
 function getPrintsByOracleId (oracleId) {
     const queryString = encodeURIComponent(`oracle_id:${oracleId} include:extras`)+`&unique=prints`;
     const url = `${BASE_API}/cards/search?q=${queryString}`;
-    console.log(url)
+    console.log("OracleID: "+url)
     return fetch(url, {
         headers: HEADERS
     })
@@ -39,6 +39,7 @@ function getPrintsByOracleId (oracleId) {
 function getPrintsById(id) {
     const queryString = `${id}`;
     const url = `${BASE_API}/cards/${queryString}`;
+    console.log("ID: "+url)
     return fetch(url, {
         headers: HEADERS
     })
@@ -237,6 +238,7 @@ function filterCards(sortDirection, sorting, params) {
 }
 
 function fetchData(url) {
+    console.log("Fetch Url Misc: "+url);
     return fetch(url, {
         headers: HEADERS
     })

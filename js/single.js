@@ -1,4 +1,4 @@
-import { getPrintsByOracleId, getPrintsById, getAllSymbols } from '../js/api.js'
+import { getPrintsByOracleId, getPrintsById, getAllSymbols, fetchData } from '../js/api.js'
 
 const params = new URLSearchParams(window.location.search);
 const filters = {};
@@ -7,13 +7,10 @@ for (const [key, value] of params.entries()) {
     filters[key] = value ? decodeURIComponent(value).replace(/\+/g, " ") : null;
 }
 
-let imageData = null
-
 // Which Image Info to use (if clicks on different print, it changes to id rather than oracle id)
-const allData = await getPrintsByOracleId(filters.oracle_id);
-if(filters.id) {
-    imageData = await getPrintsById(filters.id)
-}
+const allData = await getPrintsById(filters.id);
+const oracleData = await getPrintsByOracleId(allData.oracle_id);
+const rulingData = await fetchData(allData.rulings_uri);
 
 // gets card_face[0] or card_face[1]
 let transformFace;
@@ -38,38 +35,22 @@ function exchangeWithSymbols(string, symbolImagesAssoc) {
 }
 
 // Image Data is data if a print was selected
-function setCardInfo (allData, imageData = null) {
+function setCardInfo (allData, oracleData, rulingData) {
 
-    let data = allData.data[0];
     let isFlipCard = false;
     let image;
-    if(imageData) {
-        let data = imageData;
-        console.log(imageData)
-        if (data.card_faces && !data.image_uris) {
-            image = data.card_faces[transformFace].image_uris.normal;
-            isFlipCard = true;
-        } else if (data.image_uris) {
-            image = data.image_uris.normal;
-        }
-    } else {
-        if (data.card_faces && !data.image_uris) {
-            image = data.card_faces[transformFace].image_uris.normal;
-            isFlipCard = true;
-        } else if (data.image_uris) {
-            image = data.image_uris.normal;
-        }
+    console.log(allData);
+    if (allData.card_faces && !allData.image_uris) {
+        image = allData.card_faces[transformFace].image_uris.normal;
+        isFlipCard = true;
+    } else if (allData.image_uris) {
+        image = allData.image_uris.normal;
     }
 
     // Flip Card
     let flipButton = "";
     if(isFlipCard) {
-        console.log(allData.data)
-        let transformURL = `single.html?oracle_id=${allData.data[transformFace].oracle_id}`;
-        if(filters.id) {
-            console.log(allData);
-            transformURL += `&id=${imageData.id}`;
-        }
+        let transformURL = `single.html?id=${allData.id}`;
         if(transformFace === 0) {
             // If its not flipped, clicking will flip it
             transformURL += `&transform=true`;
@@ -82,9 +63,11 @@ function setCardInfo (allData, imageData = null) {
 </a>`;
     }
 
+
+    // Printings HTML
     let allPrints = "";
 
-    let printCount = allData.total_cards;
+    let printCount =  oracleData.total_cards;
     if(printCount > 9) {{
         printCount = 9;
     }}
@@ -92,104 +75,143 @@ function setCardInfo (allData, imageData = null) {
     const printSlotSize = 31;
     // Only loop a max of 10 times
     for(let i = 0; i < printCount; i++) {
-        allPrints += `<tr><td class="change-print-button"><a href="single.html?oracle_id=${allData.data[i].oracle_id}&id=${allData.data[i].id}">${allData.data[i].set_name}<span>&rarr;</span></a></td></tr>`;
+        allPrints += `<tr><td class="change-print-button"><a href="single.html?id=${oracleData.data[i].id}">${oracleData.data[i].set_name}<span>&rarr;</span></a></td></tr>`;
     }
 
-    const text = `<div class="single-flex"><div class="flip-button-container container">${flipButton}<img src="${image}" class="mtg-card big-mtg-card"></div><div class="single-text">
-        <section class="single-banner container">
-            <div class="name-line">
-                <h2>${data.name}</h2>
-                <div>${exchangeWithSymbols(data.mana_cost ?? data.card_faces[transformFace].mana_cost, symbolImagesAssoc)}</div>
+    // Rulings HTML
+    let allRulings = "";
+    for(let i = 0; i < rulingData.data.length; i++) {
+        allRulings += 
+        `<div>
+            <p class="ruling-date">${rulingData.data[i].published_at}</p>
+            <p class="ruling-text">${rulingData.data[i].comment}</p>
+        </div>`;
+    }
+
+    const text = 
+    `<div class="container">
+        <div class="single-flex">
+            <div class="flip-button-container container">
+                ${flipButton}
+                <img src="${image}" class="mtg-card big-mtg-card">
             </div>
-            <p class="type-line">${data.type_line}</p>
-            <p>${exchangeWithSymbols(data.oracle_text ?? data.card_faces[transformFace].oracle_text, symbolImagesAssoc)}</p>
-            ${data.flavor_text ? `<p class="flavor-text">${exchangeWithSymbols(data.flavor_text ?? data.card_faces[transformFace].flavor_text, symbolImagesAssoc)}</p>` : ``}
-        </section>
-        <div class="single-extras-flex container">
-            <section class="legalities">
-                <h2>Legalities</h2>
-                <table class="legalities-table">
-                    <thead>
-                        <tr>
-                            <th>Format</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Standard</td>
-                            <td class="${data.legalities.standard}">
-                                ${data.legalities.standard.toUpperCase().replace("_", " ")}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Modern</td>
-                            <td class="${data.legalities.modern}">
-                                ${data.legalities.modern.toUpperCase().replace("_", " ")}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Commander</td>
-                            <td class="${data.legalities.commander}">
-                                ${data.legalities.commander.toUpperCase().replace("_", " ")}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Legacy</td>
-                            <td class="${data.legalities.legacy}">
-                                ${data.legalities.legacy.toUpperCase().replace("_", " ")}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Vintage</td>
-                            <td class="${data.legalities.vintage}">
-                                ${data.legalities.vintage.toUpperCase().replace("_", " ")}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Pauper</td>
-                            <td class="${data.legalities.pauper}">
-                                ${data.legalities.pauper.toUpperCase().replace("_", " ")}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Historic</td>
-                            <td class="${data.legalities.historic}">
-                                ${data.legalities.historic.toUpperCase().replace("_", " ")}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Timeless</td>
-                            <td class="${data.legalities.timeless}">
-                                ${data.legalities.timeless.toUpperCase().replace("_", " ")}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Oathbreaker</td>
-                            <td class="${data.legalities.oathbreaker}">
-                                ${data.legalities.oathbreaker.toUpperCase().replace("_", " ")}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="single-text">
+                <section class="single-banner container">
+                    <div class="name-line">
+                        <h2>${allData.name}</h2>
+                        <div>${exchangeWithSymbols(allData.mana_cost ?? allData.card_faces[transformFace].mana_cost, symbolImagesAssoc)}</div>
+                    </div>
+                    <p class="type-line">${allData.type_line}</p>
+                    <p>${exchangeWithSymbols(allData.oracle_text ?? allData.card_faces[transformFace].oracle_text, symbolImagesAssoc)}</p>
+                    ${allData.flavor_text ? `<p class="flavor-text">${exchangeWithSymbols(allData.flavor_text ?? allData.card_faces[transformFace].flavor_text, symbolImagesAssoc)}</p>` : ``}
+                </section>
+                <div class="single-extras-flex container">
+                    <section class="legalities">
+                        <h2>Legalities</h2>
+                        <table class="legalities-table">
+                            <thead>
+                                <tr>
+                                    <th>Format</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Standard</td>
+                                    <td class="${allData.legalities.standard}">
+                                        ${allData.legalities.standard.toUpperCase().replace("_", " ")}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Modern</td>
+                                    <td class="${allData.legalities.modern}">
+                                        ${allData.legalities.modern.toUpperCase().replace("_", " ")}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Commander</td>
+                                    <td class="${allData.legalities.commander}">
+                                        ${allData.legalities.commander.toUpperCase().replace("_", " ")}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Legacy</td>
+                                    <td class="${allData.legalities.legacy}">
+                                        ${allData.legalities.legacy.toUpperCase().replace("_", " ")}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Vintage</td>
+                                    <td class="${allData.legalities.vintage}">
+                                        ${allData.legalities.vintage.toUpperCase().replace("_", " ")}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Pauper</td>
+                                    <td class="${allData.legalities.pauper}">
+                                        ${allData.legalities.pauper.toUpperCase().replace("_", " ")}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Historic</td>
+                                    <td class="${allData.legalities.historic}">
+                                        ${allData.legalities.historic.toUpperCase().replace("_", " ")}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Timeless</td>
+                                    <td class="${allData.legalities.timeless}">
+                                        ${allData.legalities.timeless.toUpperCase().replace("_", " ")}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Oathbreaker</td>
+                                    <td class="${allData.legalities.oathbreaker}">
+                                        ${allData.legalities.oathbreaker.toUpperCase().replace("_", " ")}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </section>
+                    <section class="prints">
+                        <h2>Printings</h2>
+                        <table class="prints-table">
+                            <thead>
+                                <tr>
+                                    <th>Set Released</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${allPrints}
+                                <tr><td style="height:${printSlotsMissing * printSlotSize}px" class="prints-filler"></td><tr>
+                            </tbody>
+                                
+                        </table>
+                    </section>
+                </div>
+            </div>
+        </div>
+        <div class="below-single-flex">
+            <section class="rulings">
+                <h2>Rulings</h2>
+                <div>
+                    ${allRulings}
+                </div>
             </section>
-            <section class="prints">
-                <h2>Printings</h2>
-                <table class="prints-table">
-                    <thead>
-                        <tr>
-                            <th>Set Released</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${allPrints}
-                        <tr><td style="height:${printSlotsMissing * printSlotSize}px" class="prints-filler"></td><tr>
-                    </tbody>
-                        
-                </table>
+            <section class="single-price">
+                <h2>Price</h2>
+                <div>
+                    <ul>
+                    </ul>
+                    <ul class="buy-links">
+                        <li><a href="">TCGplayer</a></li>
+                        <li><a href="">Cardmarket</a></li>
+                        <li><a href="">Cardhoarder</a></li>
+                    </ul>
+                </div>
             </section>
         </div>
-    </div></div>`;
+    </div>`;
     document.querySelector('#card-info').innerHTML += text;
 }
 
@@ -198,4 +220,4 @@ backButton.addEventListener('click', ev => {
     window.history.back()
 })
 
-setCardInfo(allData, imageData);
+setCardInfo(allData, oracleData, rulingData);

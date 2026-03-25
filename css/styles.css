@@ -16,8 +16,8 @@
 :root {
     --primary-color: rgb(37, 0, 51);
     --primary-image: linear-gradient(120deg, rgb(25, 4, 32), rgb(44, 12, 56));
-    --secondary-color: #D8BD53;
-    --secondary-hover: #c0a846;
+    --secondary-color: #ffcc00;
+    --secondary-hover: #e0bf38;
     --ternary-color: #6eddff;
     --parchment: #f0f0f0;
     --white: #fff;
@@ -25,7 +25,7 @@
     --heading-font: 'Rocker', serif;
     --body-font: 'Inria', serif;
     --success: #4CAF50;
-    --danger: #C0392B;
+    --danger: #e22a2a;
     --grey: #bcbcbc;
 }
 
@@ -620,13 +620,14 @@ img.container {
 
 
 .legalities {
-    padding: 0 1rem;
     width: 100%;
+    padding: 0 1rem;
 }
 
 .legalities h2 {
     padding-top: 1rem;
     padding-bottom: 1rem;
+    margin-top: 1rem;
 }
 
 .legal {
@@ -708,7 +709,20 @@ tr td:last-of-type {
 }
 
 .prints h2 {
-    margin: 1rem 0;
+    padding: 1rem 0;
+    margin-top: 1rem;
+}
+
+.prints h2,
+.legalities h2 {
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    padding: 0.5rem 1rem;
+    border-radius: 0 1rem 0 0;
+    corner-shape: bevel;
+    box-shadow: 0 5px var(--secondary-hover);
+    z-index: 100;
+    margin-bottom: 0.25rem;
 }
 
 .change-print-button:hover {
@@ -758,8 +772,9 @@ tr td:last-of-type {
 
 .flip-button {
     position: absolute;
-    top: 0;
-    right: 0;
+    top: -20px;
+    right: 0px;
+    width: 3rem;
 }
 
 .flip-button-container {
@@ -768,13 +783,59 @@ tr td:last-of-type {
 
 .flip-button svg {
     max-width: 3rem;
-    background-color: rgba(255, 255, 255, 0.363);
-    color: var(--black);
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
     border-radius: 100%;
     padding: 0.25rem;
 }
 
+.rulings {
+    background-color: var(--parchment);
+    color: var(--primary-color);
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.rulings h2 {
+    margin-bottom: 1rem;
+}
+
+.rulings > div > div {
+    margin-bottom: 1rem;
+}
+
+.ruling-date {
+    font-style: italic;
+    font-family: var(--heading-font);
+}
+
+.single-price {
+    padding: 1rem;  
+    background-color: var(--parchment);
+    margin-top: 1rem;
+}
+
+.below-single-flex {
+    color: var(--primary-color);
+}
+
+#card-info > .container {
+    padding: 0;
+}
+
 @media (width > 1130px) {
+    .below-single-flex {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .single-price {
+         width: 40%;
+    }
+
+    #card-info > .container {
+        padding: 0 1rem;
+    }
     table,
     .legalities {
         width: unset;
@@ -795,7 +856,7 @@ tr td:last-of-type {
     .single-flex {
         margin: 0 auto;
         max-width: 1200px;
-        padding: 0 1rem;
+        display: flex;
     }
 
     .single-text {
@@ -814,11 +875,6 @@ tr td:last-of-type {
         height: 100%;
         padding: 0;
         margin: 0;
-    }
-    
-    .single-flex {
-        padding-left: 2rem;
-        display: flex;
     }
 }
 

@@ -91,19 +91,19 @@ function setCardInfo (allData, oracleData, rulingData) {
         allRulings = `<div><p>There have been no rulings made on this card.</p></div>`
     }
 
-    let allPrices = "";
-    Object.entries(allData.prices).forEach(([key, value]) => {
-        if(value == null) {
-            
-        }
-        if(key != usd_etched) {
-            `<li>${allData.prices.usd} USD</li>
-            <li>${allData.prices.usd_foil} Foil USD</li>
-            <li>${allData.prices.eur} EUR</li>
-            <li>${allData.prices.eur_foil} Foil EUR</li>
-            <li>${allData.prices.tix} Tix</li>`
-        }
-    });
+    // let allPrices = "";
+    // Object.entries(allData.prices).forEach(([key, value]) => {
+    //     if(value == null) {
+
+    //     }
+    //     if(key != usd_etched) {
+    //         `<li>${allData.prices.usd} USD</li>
+    //         <li>${allData.prices.usd_foil} Foil USD</li>
+    //         <li>${allData.prices.eur} EUR</li>
+    //         <li>${allData.prices.eur_foil} Foil EUR</li>
+    //         <li>${allData.prices.tix} Tix</li>`
+    //     }
+    // });
 
     const text = 
     `<div class="container">

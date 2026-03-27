@@ -72,7 +72,7 @@ function setCardInfo (allData, oracleData, rulingData) {
         printCount = 9;
     }}
     const printSlotsMissing = 9 - printCount;
-    const printSlotSize = 31;
+    const printSlotSize = 30;
     // Only loop a max of 10 times
     for(let i = 0; i < printCount; i++) {
         allPrints += `<tr><td class="change-print-button"><a href="single.html?id=${oracleData.data[i].id}">${oracleData.data[i].set_name}<span>&rarr;</span></a></td></tr>`;
@@ -87,6 +87,23 @@ function setCardInfo (allData, oracleData, rulingData) {
             <p class="ruling-text">${rulingData.data[i].comment}</p>
         </div>`;
     }
+    if(allRulings == "") {
+        allRulings = `<div><p>There have been no rulings made on this card.</p></div>`
+    }
+
+    let allPrices = "";
+    Object.entries(allData.prices).forEach(([key, value]) => {
+        if(value == null) {
+            
+        }
+        if(key != usd_etched) {
+            `<li>${allData.prices.usd} USD</li>
+            <li>${allData.prices.usd_foil} Foil USD</li>
+            <li>${allData.prices.eur} EUR</li>
+            <li>${allData.prices.eur_foil} Foil EUR</li>
+            <li>${allData.prices.tix} Tix</li>`
+        }
+    });
 
     const text = 
     `<div class="container">
@@ -109,12 +126,6 @@ function setCardInfo (allData, oracleData, rulingData) {
                     <section class="legalities">
                         <h2>Legalities</h2>
                         <table class="legalities-table">
-                            <thead>
-                                <tr>
-                                    <th>Format</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
                             <tbody>
                                 <tr>
                                     <td>Standard</td>
@@ -176,11 +187,6 @@ function setCardInfo (allData, oracleData, rulingData) {
                     <section class="prints">
                         <h2>Printings</h2>
                         <table class="prints-table">
-                            <thead>
-                                <tr>
-                                    <th>Set Released</th>
-                                </tr>
-                            </thead>
                             <tbody>
                                 ${allPrints}
                                 <tr><td style="height:${printSlotsMissing * printSlotSize}px" class="prints-filler"></td><tr>
@@ -202,11 +208,16 @@ function setCardInfo (allData, oracleData, rulingData) {
                 <h2>Price</h2>
                 <div>
                     <ul>
+                        <li>${allData.prices.usd} USD</li>
+                        <li>${allData.prices.usd_foil} Foil USD</li>
+                        <li>${allData.prices.eur} EUR</li>
+                        <li>${allData.prices.eur_foil} Foil EUR</li>
+                        <li>${allData.prices.tix} Tix</li>
                     </ul>
                     <ul class="buy-links">
-                        <li><a href="">TCGplayer</a></li>
-                        <li><a href="">Cardmarket</a></li>
-                        <li><a href="">Cardhoarder</a></li>
+                        <li class="tcgplayer"><a href="${allData.purchase_uris.tcgplayer}" target="_blank">TCGplayer</a></li>
+                        <li class="cardmarket"><a href="${allData.purchase_uris.cardmarket}" target="_blank">Cardmarket</a></li>
+                        <li class="cardhoarder"><a href="${allData.purchase_uris.cardhoarder}" target="_blank">Cardhoarder</a></li>
                     </ul>
                 </div>
             </section>

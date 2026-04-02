@@ -72,7 +72,7 @@ function setCardInfo (allData, oracleData, rulingData) {
         printCount = 9;
     }}
     const printSlotsMissing = 9 - printCount;
-    const printSlotSize = 30;
+    const printSlotSize = 31;
     // Only loop a max of 10 times
     for(let i = 0; i < printCount; i++) {
         allPrints += `<tr><td class="change-print-button"><a href="single.html?id=${oracleData.data[i].id}">${oracleData.data[i].set_name}<span>&rarr;</span></a></td></tr>`;
@@ -91,19 +91,23 @@ function setCardInfo (allData, oracleData, rulingData) {
         allRulings = `<div><p>There have been no rulings made on this card.</p></div>`
     }
 
-    // let allPrices = "";
-    // Object.entries(allData.prices).forEach(([key, value]) => {
-    //     if(value == null) {
-
-    //     }
-    //     if(key != usd_etched) {
-    //         `<li>${allData.prices.usd} USD</li>
-    //         <li>${allData.prices.usd_foil} Foil USD</li>
-    //         <li>${allData.prices.eur} EUR</li>
-    //         <li>${allData.prices.eur_foil} Foil EUR</li>
-    //         <li>${allData.prices.tix} Tix</li>`
-    //     }
-    // });
+    // Prices HTML
+    let allPrices = "";
+    let formattedPriceLabels = {
+        "usd": "USD",
+        "usd_foil": "USD Foil",
+        "eur": "EUR",
+        "eur_foil": "EUR Foil",
+        "tix": "TIX"
+    }
+    Object.entries(allData.prices).forEach(([key, value]) => {
+        if(value != null) {
+            allPrices += `<li class="price-pill">${key == `tix` ? "" : `$`}${value} ${formattedPriceLabels[key]}</li>`;
+        }
+    });
+    if(allPrices == "") {
+        allPrices += `<li class="no-prices">No prices available for this card.</li>`
+    }
 
     const text = 
     `<div class="container">
@@ -207,12 +211,8 @@ function setCardInfo (allData, oracleData, rulingData) {
             <section class="single-price">
                 <h2>Price</h2>
                 <div>
-                    <ul>
-                        <li>${allData.prices.usd} USD</li>
-                        <li>${allData.prices.usd_foil} Foil USD</li>
-                        <li>${allData.prices.eur} EUR</li>
-                        <li>${allData.prices.eur_foil} Foil EUR</li>
-                        <li>${allData.prices.tix} Tix</li>
+                    <ul class="prices">
+                        ${allPrices}
                     </ul>
                     <ul class="buy-links">
                         <li class="tcgplayer"><a href="${allData.purchase_uris.tcgplayer}" target="_blank">TCGplayer</a></li>
@@ -225,10 +225,15 @@ function setCardInfo (allData, oracleData, rulingData) {
     </div>`;
     document.querySelector('#card-info').innerHTML += text;
 }
+if(!sessionStorage.getItem("originalPage")) {
+    sessionStorage.setItem("originalPage", document.referrer);
+}
 
 const backButton = document.querySelector('.back');
-backButton.addEventListener('click', ev => {
-    window.history.back()
+backButton.addEventListener('click', () => {
+    let previousUrl = sessionStorage.getItem("originalPage");
+    sessionStorage.removeItem("originalPage");
+    window.location.href = previousUrl;
 })
 
 setCardInfo(allData, oracleData, rulingData);

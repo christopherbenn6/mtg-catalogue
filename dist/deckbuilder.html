@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#D8BD53">
-    <title>Eldritch Spellbook | Single Card</title>
-
-  <script type="module" crossorigin src="/assets/single-Q6YMcCGl.js"></script>
-  <link rel="modulepreload" crossorigin href="/assets/reset-WE9h_3If.js">
-  <link rel="modulepreload" crossorigin href="/assets/api-D161oAJU.js">
+    <title>Eldritch Spellbook | Deckbuilder</title>
+
+
+  <script type="module" crossorigin src="/assets/reset-WE9h_3If.js"></script>
+  <script type="module" crossorigin src="/assets/firebase-BbpGxBSH.js"></script>
   <link rel="stylesheet" crossorigin href="/assets/reset-XLDV0dZY.css">
 </head>
-<body class="single-page">
+<body>
     <header>
         <nav>
             <div class="container navigation">
@@ -26,10 +25,19 @@
     <div class="bg-color">
         <div class="bg-design">
             <main>
-                <div class="container"><button class="back">&larr; Back To Cards</button></div>
-                <section id="card-info">
-            
-                </section>
+                <form action="" method="post">
+                    <div>
+                        <label for="">Email</label>
+                        <input type="text">
+                    </div>
+
+                    <div>
+                        <label for="">Password</label>
+                        <input type="text" id="password-sign-in">
+                    </div>
+
+                    <input type="submit">
+                </form>
             </main>
         </div>
     </div>

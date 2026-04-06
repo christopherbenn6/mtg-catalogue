@@ -885,6 +885,10 @@ tr td:last-of-type {
     border: none;
 }
 
+#sign-up-form {
+    color: var(--white);
+}
+
 @media (width > 800px) {
     .legalities {
         padding: 0 1rem 0 0;

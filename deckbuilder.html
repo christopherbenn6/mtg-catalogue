@@ -25,18 +25,21 @@
     <div class="bg-color">
         <div class="bg-design">
             <main>
-                <form action="" method="post">
+                <form method="post" id="sign-up-form">
                     <div>
-                        <label for="">Email</label>
-                        <input type="text">
+                        <label for="email-sign-up">Email</label>
+                        <input type="text" id="email-sign-up" name="email-sign-up">
                     </div>
 
                     <div>
-                        <label for="">Password</label>
-                        <input type="text" id="password-sign-in">
+                        <label for="password-sign-up">Password</label>
+                        <input type="text" id="password-sign-up" name="password-sign-up">
                     </div>
+                    <button id="sign-up-with-google">
+                        Sign In with Google
+                    </button>
 
-                    <input type="submit">
+                    <input type="submit" id="submit-sign-up">
                 </form>
             </main>
         </div>

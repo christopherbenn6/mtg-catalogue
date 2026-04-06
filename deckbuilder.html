@@ -4,8 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eldritch Spellbook | Deckbuilder</title>
+
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/reset.css">
+
+    <script type="module" src="/js/firebase.js"></script>
 </head>
 <body>
-    
+    <header>
+        <nav>
+            <div class="container navigation">
+                <a href="search.html">View Cards</a>
+                <a href="index.html">
+                    <h1>Eldritch Spellbook</h1>
+                </a>
+                <a href="deckbuilder.html">Create A Deck</a>
+            </div>
+        </nav>
+    </header>
+    <div class="bg-color">
+        <div class="bg-design">
+            <main>
+                <form action="" method="post">
+                    <div>
+                        <label for="">Email</label>
+                        <input type="text">
+                    </div>
+
+                    <div>
+                        <label for="">Password</label>
+                        <input type="text" id="password-sign-in">
+                    </div>
+
+                    <input type="submit">
+                </form>
+            </main>
+        </div>
+    </div>
 </body>
 </html>

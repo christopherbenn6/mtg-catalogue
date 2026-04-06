@@ -402,9 +402,12 @@ function renderCards(cards, startIndex, endIndex) {
 
     for (let i = startIndex; i < endIndex && i < cards.length; i++) {
         let image = 'img/blank.avif';
+        let transformImage = "";
+        let transImg = "";
 
         if (cards[i].card_faces && !cards[i].image_uris) {
             image = cards[i].card_faces[0].image_uris.normal;
+            transformImage = cards[i].card_faces[1].image_uris.normal
         } else if (cards[i].image_uris) {
             image = cards[i].image_uris.normal;
         }
@@ -413,12 +416,39 @@ function renderCards(cards, startIndex, endIndex) {
         img.className = 'mtg-card';
         img.src = image;
         img.loading = "lazy";
+
+        if(transformImage != "") {
+            transImg = document.createElement('img');
+            transImg.className = 'mtg-card hidden';
+            transImg.src = transformImage;
+            transImg.loading = "lazy";
+        }
         
+        let div = document.createElement('div');
+        div.className = 'flip-button-container';
         const a = document.createElement('a');
         a.href = `single.html?id=${cards[i].id}`
         a.appendChild(img);
 
-        fragment.appendChild(a);  
+        if(transformImage != "") {
+            let flipButton = `<button class="flip-button"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                </svg>
+            </button>`;
+            a.appendChild(transImg);
+            div.appendChild(a);
+            div.innerHTML += flipButton;
+            div.querySelector('.flip-button').addEventListener('click', () => {
+                let selectedImage = div.querySelector('img:not(.hidden)');
+                let unselectedImage = div.querySelector('img.hidden');
+                selectedImage.classList.add('hidden');
+                unselectedImage.classList.remove('hidden')
+            });
+        } else {
+            div.appendChild(a);
+        }
+
+        fragment.appendChild(div);  
     }
 
     cardGrid.appendChild(fragment);

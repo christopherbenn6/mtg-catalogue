@@ -254,6 +254,11 @@ nav a {
     height: auto;
 }
 
+.flip-button-container {
+    height: auto;
+    width: 100%;
+}
+
 .dropdown-button {
     background-color: var(--secondary-color);
     color: var(--primary-color);
@@ -466,6 +471,10 @@ nav a {
 
 .hidden {
     max-height: 0;
+}
+
+.display-none {
+    display: none;
 }
 
 .advanced-filters.hidden {
@@ -871,6 +880,11 @@ tr td:last-of-type {
     padding: 0.25rem 0.5rem;
 }
 
+.flip-button {
+    background: unset;
+    border: none;
+}
+
 @media (width > 800px) {
     .legalities {
         padding: 0 1rem 0 0;
@@ -937,7 +951,7 @@ tr td:last-of-type {
         height: 100%;
     }
 
-    .flip-button-container  {
+    .single-page .flip-button-container  {
         width: 60%;
         height: 100%;
         padding: 0;

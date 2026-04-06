@@ -4,8 +4,8 @@
   "description": "A Magic: The Gathering catalogue for searching card info, creating decks, and solving rules interactions.",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "vite", 
-    "build": "node ./node_modules/vite/bin/vite.js build", 
+    "dev": "vite",
+    "build": "node ./node_modules/vite/bin/vite.js build",
     "preview": "vite preview"
   },
   "repository": {
@@ -14,5 +14,8 @@
   },
   "devDependencies": {
     "vite": "^8.0.5"
+  },
+  "dependencies": {
+    "firebase": "^12.11.0"
   }
 }

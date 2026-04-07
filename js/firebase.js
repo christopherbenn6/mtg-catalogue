@@ -14,7 +14,9 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   GoogleAuthProvider,
-  signInWithPopup  
+  signInWithPopup,
+  onAuthStateChanged,
+  signOut 
 } from "firebase/auth";
 
 // Your web app's Firebase configuration
@@ -37,6 +39,15 @@ const provider = new GoogleAuthProvider();
 // Firestore / DB content
 const db = getFirestore();
 
+// Header log in / out button
+const logInOutButton = document.querySelector('#log-out-in-header');
+
+// Both Forms
+const forms = document.querySelector('#forms');
+
+// Main Page after sign in
+const deckbuilder = document.querySelector('#deckbuilder-main');
+
 // Get form sign up input
 const signUpForm = document.querySelector('#sign-up-form');
 const emailSignUpInput = document.querySelector('#email-sign-up');
@@ -50,6 +61,8 @@ const emailLogInInput = document.querySelector('#email-log-in');
 const passwordLogInInput = document.querySelector('#password-log-in');
 const logInWithGoogleButton = document.querySelector('#log-in-with-google');
 const logInButton = document.querySelector('#submit-log-in');
+
+let userId;
 
 // Create Account
 signUpButton.addEventListener('click', (e) => {
@@ -72,6 +85,37 @@ logInWithGoogleButton.addEventListener('click', (e) => {
 signUpWithGoogle.addEventListener('click', (e) => {
   e.preventDefault();
   signInWithGoogle(auth);
+});
+
+logInOutButton.addEventListener('click', (e) => {
+  e.preventDefault();
+  if(userId) {
+    signOut(auth)
+      .then(() => {
+      // Sign-out successful.
+      }).catch((error) => {
+        // An error happened.
+        console.log(error.message);
+      });
+  } 
+});
+
+
+// If user logs in or out
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // User is signed in, see docs for a list of available properties
+    // https://firebase.google.com/docs/reference/js/auth.user
+    userId = user.uid;
+    console.log(userId);
+    forms.classList.add('display-none');
+    deckbuilder.classList.remove('display-none')
+    // ...
+  } else {
+    // User is signed out
+    forms.classList.remove('display-none');
+    deckbuilder.classList.add('display-none');
+  }
 });
 
 /**
@@ -106,7 +150,6 @@ function createUser(auth, email, password) {
       // ...
     })
     .catch((error) => {
-      const errorCode = error.code;
       const errorMessage = error.message;
       console.log(errorMessage);
   });

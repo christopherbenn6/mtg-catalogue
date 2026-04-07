@@ -19,45 +19,59 @@
                     <h1>Eldritch Spellbook</h1>
                 </a>
                 <a href="deckbuilder.html">Create A Deck</a>
-                <button id="log-out-in-header">Log Out</button>
+                <button type="button" id="log-out-in-header">Log Out</button>
             </div>
         </nav>
     </header>
     <div class="bg-color">
         <div class="bg-design">
             <main>
-                <div id="forms">
-                    <div class="sign-up">
-                        <form method="post" id="sign-up-form">
-                            <div>
-                                <label for="email-sign-up">Email</label>
-                                <input type="text" id="email-sign-up" name="email-sign-up">
-                            </div>
-                            <div>
-                                <label for="password-sign-up">Password</label>
-                                <input type="text" id="password-sign-up" name="password-sign-up">
-                            </div>
-                            <button id="sign-up-with-google">
-                                Sign Up with Google
-                            </button>
-                            <input type="submit" id="submit-sign-up" value="Sign Up">
-                        </form>
+                <div id="forms" class="sm-container">
+                    <div class="open-buttons">
+                        <button id="open-sign-up" type="button">
+                            Sign Up
+                        </button>
+                        <button class="button-selected" id="open-log-in" type="button">
+                            Log In 
+                        </button>
                     </div>
-                    <div class="log-in">
-                        <form method="post" id="log-in-form">
-                            <div>
-                                <label for="email-log-in">Email</label>
-                                <input type="text" id="email-log-in" name="email-log-in">
-                            </div>
-                            <div>
-                                <label for="password-log-in">Password</label>
-                                <input type="text" id="password-log-in" name="password-log-in">
-                            </div>
-                            <button id="log-in-with-google">
-                                Sign In with Google
-                            </button>
-                            <input type="submit" id="submit-log-in" value="Log In">
-                        </form>
+                    <div>
+                        <div class="sign-up">
+                            <form class="display-none" method="post" id="sign-up-form">
+                                <div class="form-flex">
+                                    <div>
+                                        <label for="email-sign-up">Email</label>
+                                        <div class="input-container"><input type="email" id="email-sign-up" name="email-sign-up"></div>
+                                    </div>
+                                    <div>
+                                        <label for="password-sign-up">Password</label>
+                                        <div class="input-container"><input type="password" id="password-sign-up" name="password-sign-up"></div>
+                                    </div>
+                                </div>
+                                <button type="button" id="sign-up-with-google">
+                                    Sign Up with Google
+                                </button>
+                                <input type="submit" id="submit-sign-up" value="Sign Up">
+                            </form>
+                        </div>
+                        <div class="log-in">
+                            <form method="post" id="log-in-form">
+                                <div class="form-flex">
+                                    <div>
+                                        <label for="email-log-in">Email</label>
+                                        <div class="input-container"><input type="email" id="email-log-in" name="email-log-in"></div>
+                                    </div>
+                                    <div>
+                                        <label for="password-log-in">Password</label>
+                                        <div class="input-container"><input type="password" id="password-log-in" name="password-log-in"></div>
+                                    </div>
+                                </div>
+                                <button type="button" id="log-in-with-google">
+                                    Sign In with Google
+                                </button>
+                                <input type="submit" id="submit-log-in" value="Log In">
+                            </form>
+                        </div>
                     </div>
                 </div>
                 <div id="deckbuilder-main">

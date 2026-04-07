@@ -42,6 +42,10 @@ const db = getFirestore();
 // Header log in / out button
 const logInOutButton = document.querySelector('#log-out-in-header');
 
+// Form Buttons
+const openSignUp = document.querySelector('#open-sign-up');
+const openLogIn = document.querySelector('#open-log-in')
+
 // Both Forms
 const forms = document.querySelector('#forms');
 
@@ -64,15 +68,31 @@ const logInButton = document.querySelector('#submit-log-in');
 
 let userId;
 
+openSignUp.addEventListener('click', (e) => {
+  e.preventDefault();
+  openSignUp.classList.add('button-selected');
+  openLogIn.classList.remove('button-selected');
+  signUpForm.classList.remove('display-none');
+  logInForm.classList.add('display-none');
+});
+
+openLogIn.addEventListener('click', (e) => {
+  e.preventDefault();
+  openSignUp.classList.remove('button-selected');
+  openLogIn.classList.add('button-selected');
+  signUpForm.classList.add('display-none');
+  logInForm.classList.remove('display-none');
+});
+
 // Create Account
 signUpButton.addEventListener('click', (e) => {
   e.preventDefault();
-  createUser(auth, emailSignUpInput.value, passwordSignUpInput.value);
+  createUser(auth, emailSignUpInput.value.trim(), passwordSignUpInput.value.trim());
 });
 
 logInButton.addEventListener('click', (e)=> {
   e.preventDefault();
-  logIn(auth, emailLogInInput.value, passwordLogInInput.value)
+  logIn(auth, emailLogInInput.value.trim(), passwordLogInInput.value.trim())
 });
 
 // Sign in with google
@@ -147,6 +167,7 @@ function createUser(auth, email, password) {
       // Signed up 
       const user = userCredential.user;
       console.log("Signed Up");
+      signUpForm.reset();
       // ...
     })
     .catch((error) => {
@@ -162,15 +183,16 @@ function createUser(auth, email, password) {
  * @param {*} password -- User Input Password 
  */
 function logIn(auth, email, password) {
+  console.log(email+password);
   signInWithEmailAndPassword(auth, email, password)
   .then((userCredential) => {
     // Signed in 
     const user = userCredential.user;
     console.log("Logged In");
-    // ...
+    // Reset Form
+    logInForm.reset();
   })
   .catch((error) => {
-    const errorCode = error.code;
     const errorMessage = error.message;
     console.log(errorMessage);
   });
@@ -189,6 +211,7 @@ function signInWithGoogle (auth) {
     // The signed-in user info.
     const user = result.user;
     console.log("Logged in with Google");
+    logInForm.reset();
     // IdP data available using getAdditionalUserInfo(result)
     // ...
   }).catch((error) => {

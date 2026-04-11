@@ -5,7 +5,9 @@ import { initializeApp } from "firebase/app";
 import {
   collection,
   getFirestore,
-  getDocs
+  getDocs,
+  query,
+  where
 } from "firebase/firestore";
 
 // Authentication
@@ -129,6 +131,7 @@ onAuthStateChanged(auth, (user) => {
     userId = user.uid;
     forms.classList.add('display-none');
     deckbuilder.classList.remove('display-none');
+    console.log(await getPublicDecks());
     // ...
   } else {
     // User is signed out
@@ -142,16 +145,17 @@ onAuthStateChanged(auth, (user) => {
  * @param {string} tableName - The name of the table to fetch from
  * @returns {Promise} - array of data as a promise
  */
-function getDataArray(tableName) {
+async function getPublicDecks() {
   let dataArray = []
-  const colRef = collection(db, tableName);
-  return getDocs(colRef)
-  .then((snapshot) => {
-    snapshot.docs.forEach((doc) => {
-      dataArray.push({ ...doc.data(), id: doc.id}) 
-    });
-    return dataArray;
+
+  const colRef = collection(db, 'decks');
+  const q = query(colRef, where("public", "==", true));
+  const snapshot = await getDocs(q);
+
+  return snapshot.docs.forEach((doc) => {
+    dataArray.push({ ...doc.data(), id: doc.id}) 
   });
+
 }
 
 /**
@@ -225,6 +229,3 @@ function signInWithGoogle (auth) {
     // ...
   });
 }
-
-let data = await getDataArray('decks');
-console.log(data);

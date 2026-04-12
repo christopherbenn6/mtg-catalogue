@@ -9,6 +9,10 @@ const HEADERS = {
     "Accept": "application/json"
 }
 
+function getCardsFromList() {
+    
+}
+
 function getAllSymbols () {
     return fetch(`${BASE_API}/symbology`, {
         headers: HEADERS

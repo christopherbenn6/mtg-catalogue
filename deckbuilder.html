@@ -11,7 +11,7 @@
 
     <script type="module" src="/js/firebase.js"></script>
 </head>
-<body>
+<body class="deckbuilder-page">
     <header>
         <nav>
             <div class="container navigation">
@@ -26,8 +26,8 @@
     </header>
     <div class="bg-color">
         <div class="bg-design">
-            <main>
-                <div id="forms" class="sm-container">
+            <main class="container">
+                <div id="forms" class="sm-container display-none">
                     <div class="open-buttons">
                         <button id="open-sign-up" type="button">
                             Sign Up
@@ -39,7 +39,7 @@
                     <div>
                         <div class="sign-up">
                             <form class="display-none" method="post" id="sign-up-form">
-                                <h2>Create an Account.</h2>
+                                <h2>Create an Account</h2>
                                 <p class="form-info">Create an Account so you can build and view decks. If you have previously signed in with Google, please do so again.</p>
                                 <div class="form-flex">
                                     <div>
@@ -109,8 +109,35 @@
                         </div>
                     </div>
                 </div>
-                <div id="deckbuilder-main">
-                    
+                <div id="deckbuilder-main" class="display-none">
+                    <section>
+                        <div class="flex-between">
+                            <div>
+                                <h2>Your Decks</h2>
+                                <p>Here you can create decks</p>
+                            </div>
+                            <a class="create-new-deck-button" href="#">
+                                Create New Deck
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                </svg>
+                            </a>
+                        </div>
+                        <div id="user-decks">
+                            <a class="create-new-deck" href="#">
+                                Create New Deck
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                </svg>
+                            </a>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Browse Decks</h2>
+                        <div id="public-decks">
+                            
+                        </div>
+                    </section>
                 </div>
             </main>
         </div>

@@ -124,14 +124,15 @@ logInOutButton.addEventListener('click', (e) => {
 
 
 // If user logs in or out
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
   if (user) {
     // User is signed in, see docs for a list of available properties
     // https://firebase.google.com/docs/reference/js/auth.user
     userId = user.uid;
     forms.classList.add('display-none');
     deckbuilder.classList.remove('display-none');
-    console.log(await getPublicDecks());
+    const decks = await getPublicDecks();
+    createPublicDecksHTML(decks);
     // ...
   } else {
     // User is signed out
@@ -149,13 +150,14 @@ async function getPublicDecks() {
   let dataArray = []
 
   const colRef = collection(db, 'decks');
-  const q = query(colRef, where("public", "==", true));
+  const q = query(colRef, where("Public", "==", true));
   const snapshot = await getDocs(q);
 
-  return snapshot.docs.forEach((doc) => {
+  snapshot.docs.forEach((doc) => {
     dataArray.push({ ...doc.data(), id: doc.id}) 
   });
 
+  return dataArray;
 }
 
 /**
@@ -227,5 +229,19 @@ function signInWithGoogle (auth) {
     const credential = GoogleAuthProvider.credentialFromError(error);
     console.log(errorMessage);
     // ...
+  });
+}
+
+async function createPublicDecksHTML (decks) {
+  let element = document.querySelector('#public-decks');
+  element.innerHTML = ``;
+
+  decks.forEach(deck => {
+    element.innerHTML += `
+    <section>
+      <a href="#">
+        <h3>${deck.Title}</h3>
+      </a>
+    </section>`;
   });
 }

@@ -46,6 +46,7 @@ body {
 
 main {
     padding-bottom: 20rem;
+    min-height: 95vh;
 }
 
 .container {
@@ -95,6 +96,10 @@ nav {
 nav a {
     color: var(--primary-color);
     font-size: 1.5rem;
+}
+
+p {
+    font-size: clamp(1rem, 0.9091rem + 0.4545vw, 1.25rem);
 }
 
 .navigation {
@@ -426,7 +431,8 @@ nav a {
 .selected,
 .apply-filters,
 .advanced-filters-button,
-.dropdown-button.clicked {
+.dropdown-button.clicked,
+.create-new-deck-button {
     transition: all 0.3s ease;
 }
 
@@ -463,7 +469,8 @@ nav a {
     .dropdown-button:hover,
     .clear-filters:hover,
     .apply-filters:hover,
-    .advanced-filters-button:hover {
+    .advanced-filters-button:hover,
+    .create-new-deck-button:hover {
         background-color: var(--black);
         box-shadow: 0 5px var(--grey);
         color: var(--white);
@@ -905,7 +912,7 @@ tr td:last-of-type {
 #forms form {
     color: var(--primary-color);
     background: var(--parchment);
-    padding: 3rem 1rem;
+    padding: 3rem;
 }
 
 #forms label {
@@ -989,6 +996,76 @@ input:-webkit-autofill::first-line {
 .or {
     text-align: center;
     margin: 1rem 0;
+}
+
+#deckbuilder-main {
+    color: var(--white);
+}
+
+#deckbuilder-main section {
+    padding-top: 5rem;
+}
+
+.flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.create-new-deck-button {
+    background-color: var(--secondary-color);
+    color: var(--black);
+    font-size: 1.5rem;
+    border: 1px solid var(--secondary-color);
+    box-shadow: 0 5px var(--secondary-hover);
+    margin-bottom: 0.5rem;
+    white-space: nowrap;
+    min-width: 270px;
+    justify-content: space-between;
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+}
+
+.create-new-deck-button svg {
+    max-width: 40px;
+    margin-bottom: 0.3rem;
+}
+
+#user-decks,
+#public-decks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    padding-top: 2rem;
+}
+
+#user-decks > a,
+#public-decks > a {
+    flex: 1 1 300px;
+    max-width: 400px;
+    height: 300px;
+}
+
+.create-new-deck {
+    background: var(--parchment);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-size: 2rem;
+    color: var(--black);
+    border-radius: 1.5rem;
+    corner-shape: bevel;
+    box-shadow: 0 10px #b8b8b8;
+}
+
+.create-new-deck svg {
+    width: 100px;
+    height: 100px;
+    color: var(--black);
 }
 
 @media (width > 800px) {

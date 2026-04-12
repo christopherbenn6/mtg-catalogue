@@ -9,9 +9,32 @@ const HEADERS = {
     "Accept": "application/json"
 }
 
-function getCardsFromList() {
+function getCardsFromList(cardIds) {
     
+    return fetch(`${BASE_API}/cards/collection`, {
+        method: "POST",
+        headers: {
+            "User-Agent": "EldritchSpellbook/1.0",
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        body: JSON.stringify(cardIds)
+    })
+    .then(response => {
+        return response.json();
+    })
 }
+
+// {
+//             "identifiers": [
+//                 {
+//                     "id": "0dbb9439-6a4c-482a-83e7-5d6aa80d0cbd",
+//                 },
+//                 {
+//                     "id": "1a02ca71-5e39-4a5f-aaba-a1e3e10a6a3e"
+//                 }
+//             ]
+//         }
 
 function getAllSymbols () {
     return fetch(`${BASE_API}/symbology`, {
@@ -251,4 +274,4 @@ function fetchData(url) {
     })
 }
 
-export { filterCards, fetchData, getPrintsByOracleId, getPrintsById, getAllSymbols };
+export { filterCards, fetchData, getPrintsByOracleId, getPrintsById, getAllSymbols, getCardsFromList };

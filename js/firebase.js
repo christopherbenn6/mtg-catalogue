@@ -1,4 +1,5 @@
 // Import the functions you need from the SDKs you need
+import { getCardsFromList } from "../js/api";
 import { initializeApp } from "firebase/app";
 
 // Firestore
@@ -7,7 +8,9 @@ import {
   getFirestore,
   getDocs,
   query,
-  where
+  where,
+  doc,
+  getDoc
 } from "firebase/firestore";
 
 // Authentication
@@ -53,6 +56,8 @@ const forms = document.querySelector('#forms');
 
 // Main Page after sign in
 const deckbuilder = document.querySelector('#deckbuilder-main');
+const singlePublic = document.querySelector('.single-public-deck');
+const singleUser = document.querySelector('.single-user-deck');
 
 // Get form sign up input
 const signUpForm = document.querySelector('#sign-up-form');
@@ -120,15 +125,26 @@ logInOutButton.addEventListener('click', (e) => {
         console.log(error.message);
       });
   } 
+  window.location.href = "/deckbuilder.html";
 });
 
+const getValues = new URLSearchParams(window.location.search);
 
 // If user logs in or out
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     // User is signed in, see docs for a list of available properties
-    // https://firebase.google.com/docs/reference/js/auth.user
+
     userId = user.uid;
+
+    // If user is currently viewing a deck
+    if(getValues.get('public-id') != null && getValues.get('public-id') != "") {
+      forms.classList.add('display-none');
+      deckbuilder.classList.add('display-none');
+      singlePublic.classList.remove('display-none');
+      renderPublicDeck();
+      return;
+    }
     forms.classList.add('display-none');
     deckbuilder.classList.remove('display-none');
     const decks = await getPublicDecks();
@@ -158,6 +174,17 @@ async function getPublicDecks() {
   });
 
   return dataArray;
+}
+
+async function getPublicDeckById(id) {
+  const colRef = doc(db, 'decks', id);
+  const docSnap = await getDoc(colRef);
+  if (docSnap.exists()) {
+    return docSnap.data();
+  } else {
+    // docSnap.data() will be undefined in this case
+    return false;
+  }
 }
 
 /**
@@ -239,9 +266,80 @@ async function createPublicDecksHTML (decks) {
   decks.forEach(deck => {
     element.innerHTML += `
     <section>
-      <a href="#">
+      <a id="${deck.id}" href="deckbuilder.html?public-id=${deck.id}">
         <h3>${deck.Title}</h3>
       </a>
     </section>`;
+    let deckLink = document.querySelector(`#${deck.id}`);
+    deckLink.addEventListener('click', () => {
+      singlePublic.classList.remove('display-none');
+      deckbuilder.classList.add('display-none');
+    });
   });
+}
+
+async function renderPublicDeck () {
+  // Check if the id is actually an ID: 
+  let deck = await getPublicDeckById(getValues.get('public-id'));
+
+  // Array of objects containing an ID for every card
+  let idArray = [];
+  
+  let cards = deck['deck-list'];
+  cards.forEach(cardId => {
+    idArray.push({ id: cardId });
+  });
+  let cardData = await getCardsFromList({ identifiers: idArray });
+  console.log(cardData);
+
+  let cardGridHTML = "";
+  let cardGroupings = {
+    land: [],
+    creature: [],
+    enchantment: [],
+    artifact: [],
+    instant: [],
+    sorcery: [],
+    planeswalker: [],
+    battle: []
+  };
+  let totalPrice = 0;
+
+  cardData['data'].forEach(card => {
+    let price = card.prices.usd;
+    for (const key in cardGroupings) {
+      if(card.type_line.toLowerCase().includes(key))
+      cardGroupings[key] += `<ul class="deck-cards"><li>${card.name}</li></ul>`
+    }
+    if(price != null) {
+      totalPrice += parseFloat(price);
+    }
+  });
+
+  Object.entries(cardGroupings).forEach(([key, value]) => {
+    cardGridHTML += `<ul>
+      ${...value}
+    </ul>`;
+  });
+  console.log(cardGroupings);
+  
+
+  const html = `
+  <div>
+    <div>
+      <h2>${deck.Title}</h2>
+      <p>${totalPrice != 0 ? "$"+totalPrice+" USD" : "No Price Available"}</p>
+    </div>
+  </div>
+
+  <div>
+    <div class="build-sidebar">
+
+    </div>
+    <div class="build-grid">
+      ${cardGroupings}
+    </div>
+  </div>
+  `;
+  singlePublic.innerHTML += html;
 }

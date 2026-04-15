@@ -1,5 +1,5 @@
 // Import the functions you need from the SDKs you need
-import { getCardsFromList } from "../js/api";
+import { getCardsFromList, getAllSymbols } from "../js/api";
 import { initializeApp } from "firebase/app";
 
 // Firestore
@@ -278,12 +278,26 @@ async function createPublicDecksHTML (decks) {
   });
 }
 
+const symbolData = await getAllSymbols();
+let symbolImagesAssoc = {};
+symbolData.data.forEach(symbol => {
+    symbolImagesAssoc[symbol.symbol] = symbol.svg_uri;
+});
+
+async function exchangeWithSymbols(string, symbolImagesAssoc) {
+    Object.entries(symbolImagesAssoc).forEach(([key, value]) => {
+        string = string.replaceAll(key, `<img class="symbol" src="${value}">`)
+    });
+    return string;
+}
+
 async function renderPublicDeck () {
   // Check if the id is actually an ID: 
   let deck = await getPublicDeckById(getValues.get('public-id'));
 
   // Array of objects containing an ID for every card
   let idArray = [];
+  singlePublic.innerHTML = "";
   
   let cards = deck['deck-list'];
   cards.forEach(cardId => {
@@ -294,35 +308,43 @@ async function renderPublicDeck () {
 
   let cardGridHTML = "";
   let cardGroupings = {
-    land: [],
-    creature: [],
-    enchantment: [],
-    artifact: [],
-    instant: [],
-    sorcery: [],
-    planeswalker: [],
-    battle: []
+    land: "",
+    creature: "",
+    enchantment: "",
+    artifact: "",
+    instant: "",
+    sorcery: "",
+    planeswalker: "",
+    battle: ""
   };
+  let sidebarHTML = "";
   let totalPrice = 0;
 
-  cardData['data'].forEach(card => {
+  for (const card of cardData['data'])  {
     let price = card.prices.usd;
+    let cardName = card.name;
+    if(cardName.length > 17) {
+      cardName = cardName.slice(0, 17)+"...";
+    }
     for (const key in cardGroupings) {
+
+      const symbols = await exchangeWithSymbols(card.mana_cost ?? card.card_faces[0].mana_cost, symbolImagesAssoc);
+
       if(card.type_line.toLowerCase().includes(key))
-      cardGroupings[key] += `<ul class="deck-cards"><li>${card.name}</li></ul>`
+      cardGroupings[key] += `<li id=${card.id}><span class="card-name-span">${cardName}</span> <span>${symbols}</span> <span>$${price}</span></li>`
     }
     if(price != null) {
       totalPrice += parseFloat(price);
     }
-  });
+  };
 
   Object.entries(cardGroupings).forEach(([key, value]) => {
-    cardGridHTML += `<ul>
-      ${...value}
-    </ul>`;
+    if(value != "") {
+      cardGridHTML += `<div><h3>${key.charAt(0).toUpperCase() + key.slice(1)}s</h3><ul class="deck-cards" id="${key}-grouping">
+      ${value}
+    </ul></div>`;
+    }
   });
-  console.log(cardGroupings);
-  
 
   const html = `
   <div>
@@ -333,13 +355,38 @@ async function renderPublicDeck () {
   </div>
 
   <div>
-    <div class="build-sidebar">
-
-    </div>
     <div class="build-grid">
-      ${cardGroupings}
+      <div class="build-sidebar"></div>
+      ${cardGridHTML}
     </div>
   </div>
   `;
   singlePublic.innerHTML += html;
+
+  const allItemsInDeck = document.querySelectorAll('.build-card-item');
+  allItemsInDeck.forEach(item => {
+    let itemId = item.getAttribute('id');
+    let singleCardData = cardData['data'].find((card) => card.id === itemId);
+    item.addEventListener('click', () => renderPublicSidebar(singleCardData));
+  });
+
+  renderPublicSidebar(cardData['data'][0]);
+}
+
+function renderPublicSidebar(card) {
+  console.log(card);
+  // Notes: 
+  // When the format is singleton, do not show add, instead just a "remove from deck"
+  // When the card is 2 sided, add a transform button
+  const sidebar = document.querySelector('.build-sidebar');
+  let image;
+  if(card.card_faces != null) {
+    image = card.card_faces[0].image_uris.normal;
+  } else {
+    image = card.image_uris.normal;
+  }
+  sidebar.innerHTML = `<div>
+    <img class="mtg-card" src="${image}">
+    <p>$${card.prices.usd} USD</p>
+  </div>`;
 }

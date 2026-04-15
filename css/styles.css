@@ -1076,15 +1076,83 @@ input:-webkit-autofill::first-line {
 .deck-cards {
     list-style-type: none;
     padding: 0;
-    display: flex;
+    flex: 1;
+}
+
+.build-grid {
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1rem;
 }
 
 .deck-cards li {
-    border-top: 2px solid var(--secondary-color);
-    padding: 0.5rem;
+    border-top: 1px solid var(--secondary-color);
+    padding: 0.4rem;
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.deck-cards li:hover {
+    cursor: pointer;
+    background-color: var(--black);
+}
+
+.deckbuilder-page .container {
+    max-width: 2000px;
+}
+
+.deck-cards .symbol {
+    width: 100%;
+    max-width: 1.25rem;
+}
+
+.build-sidebar {
+    grid-row: 1 / span 11;
+}
+
+.quantity-inputs {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.25rem;
+}
+
+.quantity-inputs svg {
+    width: 2rem;
+}
+
+.quantity-inputs input {
+    background-color: var(--secondary-color);
+}
+
+.quantity-inputs button {
+    border: none;
+    width: 30%;
+    display: flex;
+    justify-content: center;
+    background-color: var(--secondary-color);
+}
+
+@media (width > 500px) {
+    .build-grid {
+        column-count: 2;
+    }
+
+    .build-grid > div {
+        break-inside: avoid;
+        margin-bottom: 1rem;
+    }
+    
+}
+
+@media (width > 900px) {
+    .build-grid {
+        column-count: 3;
+    }
 }
 
 @media (width > 800px) {
+
     .legalities {
         padding: 0 1rem 0 0;
     }
@@ -1100,6 +1168,9 @@ input:-webkit-autofill::first-line {
 }
 
 @media (width > 1130px) {
+    .build-grid {
+        column-count: 4;
+    }
     .below-single-flex {
         display: flex;
         gap: 1rem;
@@ -1159,6 +1230,12 @@ input:-webkit-autofill::first-line {
         height: 100%;
         padding: 0;
         margin: 0;
+    }
+}
+
+@media (width > 1500px) {
+    .build-grid {
+        column-count: 5;
     }
 }
 

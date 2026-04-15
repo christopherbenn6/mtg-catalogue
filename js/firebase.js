@@ -331,7 +331,7 @@ async function renderPublicDeck () {
       const symbols = await exchangeWithSymbols(card.mana_cost ?? card.card_faces[0].mana_cost, symbolImagesAssoc);
 
       if(card.type_line.toLowerCase().includes(key))
-      cardGroupings[key] += `<li id=${card.id}><span class="card-name-span">${cardName}</span> <span>${symbols}</span> <span>$${price}</span></li>`
+      cardGroupings[key] += `<li class="build-card-item" id=${card.id}><span class="card-name-span">${cardName}</span> <div class="price-mana-flex"><span>${symbols}</span> <span>$${price}</span></div></li>`
     }
     if(price != null) {
       totalPrice += parseFloat(price);
@@ -350,13 +350,13 @@ async function renderPublicDeck () {
   <div>
     <div>
       <h2>${deck.Title}</h2>
-      <p>${totalPrice != 0 ? "$"+totalPrice+" USD" : "No Price Available"}</p>
+      <p>${totalPrice != 0 ? "$"+Math.round(totalPrice * 100) / 100+" USD" : "No Price Available"}</p>
     </div>
   </div>
 
-  <div>
+  <div class="build-flex">
+    <div class="build-sidebar"></div>
     <div class="build-grid">
-      <div class="build-sidebar"></div>
       ${cardGridHTML}
     </div>
   </div>
@@ -388,5 +388,8 @@ function renderPublicSidebar(card) {
   sidebar.innerHTML = `<div>
     <img class="mtg-card" src="${image}">
     <p>$${card.prices.usd} USD</p>
+    <div class="button-wrapper">
+      <button type="button">More Card Info</button>
+    </div>
   </div>`;
 }

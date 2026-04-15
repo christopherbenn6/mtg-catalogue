@@ -1082,20 +1082,27 @@ input:-webkit-autofill::first-line {
 .build-grid {
     grid-template-columns: repeat(1, 1fr);
     gap: 1rem;
+    padding-bottom: 5rem;
+    background: var(--parchment);
+    color: var(--black);
+    padding: 1rem;
+    margin-top: 1rem;
 }
 
-.deck-cards li {
+.build-card-item {
     border-top: 1px solid var(--secondary-color);
     padding: 0.4rem;
     align-items: center;
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
+    transition: all 0.3s ease;
 }
 
 .deck-cards li:hover {
     cursor: pointer;
     background-color: var(--black);
+    color: var(--white);
 }
 
 .deckbuilder-page .container {
@@ -1108,7 +1115,12 @@ input:-webkit-autofill::first-line {
 }
 
 .build-sidebar {
-    grid-row: 1 / span 11;
+    height: 100%;
+}
+
+.build-flex {
+    display: flex;
+    padding-bottom: 5rem;
 }
 
 .quantity-inputs {
@@ -1133,9 +1145,26 @@ input:-webkit-autofill::first-line {
     background-color: var(--secondary-color);
 }
 
-@media (width > 500px) {
+.price-mana-flex{
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.button-wrapper button {
+    background-color: var(--secondary-color);
+    box-shadow: 0 5px var(--secondary-hover);
+    border: none;
+    padding: 0.5rem 1rem;
+    font-family: var(--heading-font);
+    font-size: 1.5rem;
+    width: 100%;
+    margin: 1rem 0;
+}
+
+@media (width > 700px) {
     .build-grid {
-        column-count: 2;
+        column-count: 1;
     }
 
     .build-grid > div {
@@ -1145,9 +1174,9 @@ input:-webkit-autofill::first-line {
     
 }
 
-@media (width > 900px) {
+@media (width > 1100px) {
     .build-grid {
-        column-count: 3;
+        column-count: 2;
     }
 }
 
@@ -1168,9 +1197,6 @@ input:-webkit-autofill::first-line {
 }
 
 @media (width > 1130px) {
-    .build-grid {
-        column-count: 4;
-    }
     .below-single-flex {
         display: flex;
         gap: 1rem;
@@ -1235,7 +1261,7 @@ input:-webkit-autofill::first-line {
 
 @media (width > 1500px) {
     .build-grid {
-        column-count: 5;
+        column-count: 3;
     }
 }
 

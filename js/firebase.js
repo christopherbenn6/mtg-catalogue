@@ -294,31 +294,51 @@ async function exchangeWithSymbols(string, symbolImagesAssoc) {
 async function renderPublicDeck () {
   // Check if the id is actually an ID: 
   let deck = await getPublicDeckById(getValues.get('public-id'));
+  let sort = getValues.get('sort') ?? "type";
 
   // Array of objects containing an ID for every card
   let idArray = [];
   singlePublic.innerHTML = "";
   
+  // Fetch cards from API
   let cards = deck['deck-list'];
   cards.forEach(cardId => {
     idArray.push({ id: cardId });
   });
   let cardData = await getCardsFromList({ identifiers: idArray });
-  console.log(cardData);
 
+  // Resets and Initialization
   let cardGridHTML = "";
-  let cardGroupings = {
-    land: "",
-    creature: "",
-    enchantment: "",
-    artifact: "",
-    instant: "",
-    sorcery: "",
-    planeswalker: "",
-    battle: ""
-  };
   let sidebarHTML = "";
   let totalPrice = 0;
+  let cardGroupings;
+
+  if(sort == "type") {
+    cardGroupings = {
+      land: "",
+      creature: "",
+      enchantment: "",
+      artifact: "",
+      instant: "",
+      sorcery: "",
+      planeswalker: "",
+      battle: ""
+    };
+  } else if (sort == "mv") {
+    cardGroupings = {
+      0: "",
+      1: "",
+      2: "",
+      3: "",
+      4: "",
+      5: "",
+      6: "",
+      7: "",
+      8: "",
+      9: "",
+      10: ""
+    };
+  }
 
   for (const card of cardData['data'])  {
     let price = card.prices.usd;
@@ -328,11 +348,21 @@ async function renderPublicDeck () {
     }
     for (const key in cardGroupings) {
 
+      // Get Mana Pips
       const symbols = await exchangeWithSymbols(card.mana_cost ?? card.card_faces[0].mana_cost, symbolImagesAssoc);
 
-      if(card.type_line.toLowerCase().includes(key))
-      cardGroupings[key] += `<li class="build-card-item" id=${card.id}><span class="card-name-span">${cardName}</span> <div class="price-mana-flex"><span>${symbols}</span> <span>$${price}</span></div></li>`
+      if(sort == "type") {
+        if(card.type_line.toLowerCase().includes(key)) {
+          cardGroupings[key] += `<li class="build-card-item" id=${card.id}><span class="card-name-span">${cardName}</span> <div class="price-mana-flex"><span>${symbols}</span> <span>$${price}</span></div></li>`;
+        }
+      } else if (sort == "mv") {
+        if(card.cmc == key) {
+          cardGroupings[key] += `<li class="build-card-item" id=${card.id}><span class="card-name-span">${cardName}</span> <div class="price-mana-flex"><span>${symbols}</span> <span>$${price}</span></div></li>`;
+        }
+      }
+
     }
+
     if(price != null) {
       totalPrice += parseFloat(price);
     }
@@ -340,24 +370,52 @@ async function renderPublicDeck () {
 
   Object.entries(cardGroupings).forEach(([key, value]) => {
     if(value != "") {
-      cardGridHTML += `<div><h3>${key.charAt(0).toUpperCase() + key.slice(1)}s</h3><ul class="deck-cards" id="${key}-grouping">
-      ${value}
-    </ul></div>`;
+      if(sort == "type") {
+        cardGridHTML += `<div><h3>${key.charAt(0).toUpperCase() + key.slice(1)}s</h3><ul class="deck-cards" id="${key}-grouping">
+          ${value}
+        </ul></div>`;
+      } else if (sort == "mv") {
+        cardGridHTML += `<div><h3>Mana Value ${key.charAt(0).toUpperCase() + key.slice(1)}</h3><ul class="deck-cards" id="${key}-grouping">
+          ${value}
+        </ul></div>`;
+      }
     }
   });
 
   const html = `
-  <div>
-    <div>
-      <h2>${deck.Title}</h2>
-      <p>${totalPrice != 0 ? "$"+Math.round(totalPrice * 100) / 100+" USD" : "No Price Available"}</p>
-    </div>
-  </div>
+  
 
   <div class="build-flex">
     <div class="build-sidebar"></div>
-    <div class="build-grid">
-      ${cardGridHTML}
+    <div class="build-main">
+      <div class="build-header">
+        <div>
+          <h2>${deck.Title}</h2>
+          <p>${totalPrice != 0 ? "$"+Math.round(totalPrice * 100) / 100+" USD" : "No Price Available"}</p>
+        </div>
+        <div>
+          <div class="select sorting builder-dropdown-button">
+            <button type="button" class="dropdown-button">
+                Sort By
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                </svg>
+            </button>
+            <div class="dropdown hidden">
+                <div data-value="type">
+                    <a class="builder-sort-link" href="deckbuilder.html?public-id=${getValues.get('public-id')}&sort=type">Type</a>
+                </div>
+                <div data-value="mv">
+                    <a class="builder-sort-link" href="deckbuilder.html?public-id=${getValues.get('public-id')}&sort=mv">Mana Value</a>
+                </div>
+            </div>
+            <input type="hidden" id="sorting" name="sorting" value="">
+          </div>
+        </div>
+      </div>
+      <div class="build-grid">
+        ${cardGridHTML}
+      </div>
     </div>
   </div>
   `;
@@ -370,6 +428,18 @@ async function renderPublicDeck () {
     item.addEventListener('click', () => renderPublicSidebar(singleCardData));
   });
 
+  // Select Dropdown Functionality
+  let dropdownButtons = document.querySelectorAll('.dropdown-button');
+  dropdownButtons.forEach(button => {
+      button.addEventListener('click', (ev) => {
+          ev.preventDefault();
+          const dropdown = button.nextElementSibling;
+          dropdown.classList.toggle('hidden');
+          button.classList.toggle('clicked');
+          button.blur();
+      })
+  });
+
   renderPublicSidebar(cardData['data'][0]);
 }
 
@@ -380,16 +450,17 @@ function renderPublicSidebar(card) {
   // When the card is 2 sided, add a transform button
   const sidebar = document.querySelector('.build-sidebar');
   let image;
+  let price = card.prices.usd ? `<p class="price">${card.prices.usd} USD </p>` : "";
   if(card.card_faces != null) {
     image = card.card_faces[0].image_uris.normal;
   } else {
     image = card.image_uris.normal;
   }
   sidebar.innerHTML = `<div>
-    <img class="mtg-card" src="${image}">
-    <p>$${card.prices.usd} USD</p>
+    <img class="mtg-card display-card" src="${image}">
+    ${price}
     <div class="button-wrapper">
-      <button type="button">More Card Info</button>
+      <a href="single.html?id=${card.id}">More Card Info</a>
     </div>
   </div>`;
 }

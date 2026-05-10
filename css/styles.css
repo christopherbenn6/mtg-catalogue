@@ -1079,6 +1079,12 @@ input:-webkit-autofill::first-line {
     flex: 1;
 }
 
+
+.build-main {
+    width: 100%;
+    margin-top: 2rem;
+}
+
 .build-grid {
     grid-template-columns: repeat(1, 1fr);
     gap: 1rem;
@@ -1086,12 +1092,17 @@ input:-webkit-autofill::first-line {
     background: var(--parchment);
     color: var(--black);
     padding: 1rem;
-    margin-top: 1rem;
+    margin-top: 1px;
+}
+
+.build-grid > div:first-of-type {
+    width: 100%;
 }
 
 .build-card-item {
-    border-top: 1px solid var(--secondary-color);
-    padding: 0.4rem;
+    border-top: 1px solid var(--black);
+    padding: 0.6rem;
+    padding-bottom: 0.2rem;
     align-items: center;
     display: flex;
     justify-content: space-between;
@@ -1106,7 +1117,7 @@ input:-webkit-autofill::first-line {
 }
 
 .deckbuilder-page .container {
-    max-width: 2000px;
+    max-width: 1600px;
 }
 
 .deck-cards .symbol {
@@ -1116,6 +1127,7 @@ input:-webkit-autofill::first-line {
 
 .build-sidebar {
     height: 100%;
+    max-width: 350px;
 }
 
 .build-flex {
@@ -1151,7 +1163,16 @@ input:-webkit-autofill::first-line {
     gap: 1rem;
 }
 
-.button-wrapper button {
+.build-sidebar .price {
+    margin: 1rem 0 1rem 0;
+    text-align: center;
+}
+
+.button-wrapper {
+    margin-right: 1rem;
+}
+
+.button-wrapper a {
     background-color: var(--secondary-color);
     box-shadow: 0 5px var(--secondary-hover);
     border: none;
@@ -1160,6 +1181,51 @@ input:-webkit-autofill::first-line {
     font-size: 1.5rem;
     width: 100%;
     margin: 1rem 0;
+    display: block;
+    text-align: center;
+    color: var(--black);
+}
+
+.card-name-span {
+    font-weight: 700;
+}
+
+.build-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 1rem 1rem 0.5rem 1rem;
+    background-color: var(--secondary-color);
+    color: var(--black);
+    border-top-right-radius: 1rem;
+    corner-shape: bevel;
+}
+
+.build-header button {
+    border: 2px solid var(--black);
+}
+
+.build-header .dropdown-button.clicked {
+    background-color: var(--black);
+    box-shadow: 0 5px var(--grey);
+    color: var(--white);
+    border: 1px solid var(--white) !important;
+}
+
+.build-header .select {
+    min-width: 200px;
+}
+
+.builder-sort-link {
+    color: var(--white);
+    width: 100%;
+    padding: 0.1rem 1rem;
+    display: block;
+}
+
+.dropdown:has(.builder-sort-link) > div {
+    padding: 0;
+    display: block;
 }
 
 @media (width > 700px) {

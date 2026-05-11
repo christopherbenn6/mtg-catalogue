@@ -7,6 +7,7 @@ import {
   collection,
   getFirestore,
   getDocs,
+  setDoc,
   query,
   where,
   doc,
@@ -130,6 +131,8 @@ logInOutButton.addEventListener('click', (e) => {
 
 const getValues = new URLSearchParams(window.location.search);
 
+let isOwned = false;
+
 // If user logs in or out
 onAuthStateChanged(auth, async (user) => {
   if (user) {
@@ -138,13 +141,22 @@ onAuthStateChanged(auth, async (user) => {
     userId = user.uid;
 
     // If user is currently viewing a deck
-    if(getValues.get('public-id') != null && getValues.get('public-id') != "") {
+    if(getValues.get('id') != null && getValues.get('id') != "") {
       forms.classList.add('display-none');
       deckbuilder.classList.add('display-none');
       singlePublic.classList.remove('display-none');
-      renderPublicDeck();
+
+      // Check if the deck is made by the current user logged in, and make it editable if so
+      let deck = await getPublicDeckById(getValues.get('id'));
+      if(deck['user'] == userId) {
+        isOwned = true;
+        renderPrivateDeck(deck);
+      } else {
+        renderPublicDeck(deck);
+      }
       return;
     }
+
     forms.classList.add('display-none');
     deckbuilder.classList.remove('display-none');
     const decks = await getPublicDecks();
@@ -266,7 +278,7 @@ async function createPublicDecksHTML (decks) {
   decks.forEach(deck => {
     element.innerHTML += `
     <section>
-      <a id="${deck.id}" href="deckbuilder.html?public-id=${deck.id}">
+      <a id="${deck.id}" href="deckbuilder.html?id=${deck.id}">
         <h3>${deck.Title}</h3>
       </a>
     </section>`;
@@ -291,9 +303,8 @@ async function exchangeWithSymbols(string, symbolImagesAssoc) {
     return string;
 }
 
-async function renderPublicDeck () {
+async function renderPublicDeck (deck) {
   // Check if the id is actually an ID: 
-  let deck = await getPublicDeckById(getValues.get('public-id'));
   let sort = getValues.get('sort') ?? "type";
 
   // Array of objects containing an ID for every card
@@ -385,7 +396,7 @@ async function renderPublicDeck () {
   const html = `
   
 
-  <div class="build-flex">
+  <div class="build-flex public">
     <div class="build-sidebar"></div>
     <div class="build-main">
       <div class="build-header">
@@ -403,10 +414,10 @@ async function renderPublicDeck () {
             </button>
             <div class="dropdown hidden">
                 <div data-value="type">
-                    <a class="builder-sort-link" href="deckbuilder.html?public-id=${getValues.get('public-id')}&sort=type">Type</a>
+                    <a class="builder-sort-link" href="deckbuilder.html?id=${getValues.get('id')}&sort=type">Type</a>
                 </div>
                 <div data-value="mv">
-                    <a class="builder-sort-link" href="deckbuilder.html?public-id=${getValues.get('public-id')}&sort=mv">Mana Value</a>
+                    <a class="builder-sort-link" href="deckbuilder.html?id=${getValues.get('id')}&sort=mv">Mana Value</a>
                 </div>
             </div>
             <input type="hidden" id="sorting" name="sorting" value="">
@@ -425,7 +436,7 @@ async function renderPublicDeck () {
   allItemsInDeck.forEach(item => {
     let itemId = item.getAttribute('id');
     let singleCardData = cardData['data'].find((card) => card.id === itemId);
-    item.addEventListener('click', () => renderPublicSidebar(singleCardData));
+    item.addEventListener('click', () => renderSidebar(singleCardData));
   });
 
   // Select Dropdown Functionality
@@ -440,7 +451,209 @@ async function renderPublicDeck () {
       })
   });
 
-  renderPublicSidebar(cardData['data'][0]);
+  renderSidebar(cardData['data'][0]);
+}
+
+
+
+async function renderPrivateDeck(deck) {
+    // Check if the id is actually an ID: 
+  let sort = getValues.get('sort') ?? "type";
+
+  // Array of objects containing an ID for every card
+  let idArray = [];
+  singlePublic.innerHTML = "";
+  
+  // Fetch cards from API
+  let cards = deck['deck-list'];
+  cards.forEach(cardId => {
+    idArray.push({ id: cardId });
+  });
+  let cardData = await getCardsFromList({ identifiers: idArray });
+
+  // Resets and Initialization
+  let cardGridHTML = "";
+  let sidebarHTML = "";
+  let totalPrice = 0;
+  let cardGroupings;
+
+  if(sort == "type") {
+    cardGroupings = {
+      land: "",
+      creature: "",
+      enchantment: "",
+      artifact: "",
+      instant: "",
+      sorcery: "",
+      planeswalker: "",
+      battle: ""
+    };
+  } else if (sort == "mv") {
+    cardGroupings = {
+      0: "",
+      1: "",
+      2: "",
+      3: "",
+      4: "",
+      5: "",
+      6: "",
+      7: "",
+      8: "",
+      9: "",
+      10: ""
+    };
+  }
+
+  for (const card of cardData['data'])  {
+    let price = card.prices.usd;
+    let cardName = card.name;
+    if(cardName.length > 17) {
+      cardName = cardName.slice(0, 17)+"...";
+    }
+    for (const key in cardGroupings) {
+
+      // Get Mana Pips
+      const symbols = await exchangeWithSymbols(card.mana_cost ?? card.card_faces[0].mana_cost, symbolImagesAssoc);
+
+      if(sort == "type") {
+        if(card.type_line.toLowerCase().includes(key)) {
+          cardGroupings[key] += `<li class="build-card-item" id=${card.id}><span class="card-name-span">${cardName}</span> <div class="price-mana-flex"><span>${symbols}</span> <span>$${price}</span></div></li>`;
+        }
+      } else if (sort == "mv") {
+        if(card.cmc == key) {
+          cardGroupings[key] += `<li class="build-card-item" id=${card.id}><span class="card-name-span">${cardName}</span> <div class="price-mana-flex"><span>${symbols}</span> <span>$${price}</span></div></li>`;
+        }
+      }
+
+    }
+
+    if(price != null) {
+      totalPrice += parseFloat(price);
+    }
+  };
+
+  Object.entries(cardGroupings).forEach(([key, value]) => {
+    if(value != "") {
+      if(sort == "type") {
+        cardGridHTML += `<div><h3>${key.charAt(0).toUpperCase() + key.slice(1)}s</h3><ul class="deck-cards" id="${key}-grouping">
+          ${value}
+        </ul></div>`;
+      } else if (sort == "mv") {
+        cardGridHTML += `<div><h3>Mana Value ${key.charAt(0).toUpperCase() + key.slice(1)}</h3><ul class="deck-cards" id="${key}-grouping">
+          ${value}
+        </ul></div>`;
+      }
+    }
+  });
+
+  const html = `
+  
+
+  <div class="build-flex public">
+    <div class="build-sidebar"></div>
+    <div class="build-main">
+      <div class="build-header">
+        <div class="deckbuilder-edit">
+          <svg class="deckbuilder-edit-button" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"   stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+          </svg>
+          <div>
+            <h2>${deck.Title}</h2>
+            <p>${totalPrice != 0 ? "$"+Math.round(totalPrice * 100) / 100+" USD" : "No Price Available"}</p>
+          </div>
+        </div>
+        <div>
+          <div class="deckbuilder-header-flex">
+            <button type="button" class="save button">Save</button>
+            <div class="select sorting builder-dropdown-button">
+              <button type="button" class="dropdown-button">
+                  Sort By
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                  </svg>
+              </button>
+              <div class="dropdown hidden">
+                  <div data-value="type">
+                      <a class="builder-sort-link" href="deckbuilder.html?id=${getValues.get('id')}&sort=type">Type</a>
+                  </div>
+                  <div data-value="mv">
+                      <a class="builder-sort-link" href="deckbuilder.html?id=${getValues.get('id')}&sort=mv">Mana Value</a>
+                  </div>
+              </div>
+              <input type="hidden" id="sorting" name="sorting" value="">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="deckbuilder-edit-form hidden">
+        <form>
+          <div>
+            <label for="deck-title">Deck Title</label>
+            <input type="text" name="deck-title" id="deck-title">
+          </div>
+          <div class="deckbuilder-edit-form-checkboxes">
+            <div>
+              <label for="set-private">Set As Private</label>
+              <input type="checkbox" name="set-private" id="set-private">
+            </div>
+            <div>
+              <label for="set-public">Set As Public</label>
+              <input type="checkbox" name="set-public" id="set-public">
+            </div>
+          </div>
+          <div>
+            <input class="button" type="submit" name="deckbuilder-edit-form-submit" id="deckbuilder-edit-form-submit" value="Update">
+          </div>
+        </form
+      </div>
+      </div>
+      <div class="build-grid">
+        ${cardGridHTML}
+      </div>
+    </div>
+  </div>
+  `;
+  singlePublic.innerHTML += html;
+
+  const allItemsInDeck = document.querySelectorAll('.build-card-item');
+  allItemsInDeck.forEach(item => {
+    let itemId = item.getAttribute('id');
+    let singleCardData = cardData['data'].find((card) => card.id === itemId);
+    item.addEventListener('click', () => renderSidebar(singleCardData));
+  });
+
+  // Disable form Defaults
+  const editForm = document.querySelector('.deckbuilder-edit-form');
+  editForm.addEventListener('submit', () => {
+
+  });
+
+  const editButton = document.querySelector('.deckbuilder-edit-button')
+  editButton.addEventListener('click', () => {
+    editForm.classList.toggle('hidden')
+  });
+
+  // Select Dropdown Functionality
+  let dropdownButtons = document.querySelectorAll('.dropdown-button');
+  dropdownButtons.forEach(button => {
+      button.addEventListener('click', (ev) => {
+          ev.preventDefault();
+          const dropdown = button.nextElementSibling;
+          dropdown.classList.toggle('hidden');
+          button.classList.toggle('clicked');
+          button.blur();
+      })
+  });
+
+  renderSidebar(cardData['data'][0]);
+}
+
+function renderSidebar(card) {
+  if(isOwned) {
+    renderPrivateSidebar(card);
+  } else {
+    renderPublicSidebar(card);
+  }
 }
 
 function renderPublicSidebar(card) {
@@ -461,6 +674,49 @@ function renderPublicSidebar(card) {
     ${price}
     <div class="button-wrapper">
       <a href="single.html?id=${card.id}">More Card Info</a>
+    </div>
+  </div>`;
+}
+
+function renderPrivateSidebar(card) {
+  console.log(card);
+  // Notes: 
+  // When the format is singleton, do not show add, instead just a "remove from deck"
+  // When the card is 2 sided, add a transform button
+  const sidebar = document.querySelector('.build-sidebar');
+  let image;
+  let price = card.prices.usd ? `<p class="price">${card.prices.usd} USD </p>` : "";
+
+  let elidgebleCommander = false;
+
+  // If the card is legendary
+  if(card.type_line.toLowerCase().includes("legendary")) {
+    // If the card is a creature, vehicle or spacecraft
+    if(card.type_line.toLowerCase().includes("creature") || card.type_line.toLowerCase().includes("spacecraft") || card.type_line.toLowerCase().includes("vehicle")) {
+      elidgebleCommander = true;
+    } else if (card.type_line.toLowerCase().includes("planeswalker")){
+      if(card.oracle_text.toLowerCase().includes("commander")) {
+        elidgebleCommander = true;
+      }
+    }
+  }
+
+  let setCommander = "";
+  if(elidgebleCommander) {
+    setCommander = `<button type="button">Set As Commander</button>`;
+  }
+
+  if(card.card_faces != null) {
+    image = card.card_faces[0].image_uris.normal;
+  } else {
+    image = card.image_uris.normal;
+  }
+  sidebar.innerHTML = `<div>
+    <img class="mtg-card display-card" src="${image}">
+    ${price}
+    <div class="button-wrapper">
+      <a href="single.html?id=${card.id}">More Card Info</a>
+      ${setCommander}
     </div>
   </div>`;
 }

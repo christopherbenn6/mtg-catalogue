@@ -120,18 +120,27 @@ logInOutButton.addEventListener('click', (e) => {
   if(userId) {
     signOut(auth)
       .then(() => {
-      // Sign-out successful.
+        // Sign-out successful.
+        window.location.href = "/deckbuilder.html";
       }).catch((error) => {
         // An error happened.
         console.log(error.message);
       });
   } 
-  window.location.href = "/deckbuilder.html";
 });
 
 const getValues = new URLSearchParams(window.location.search);
 
 let isOwned = false;
+let deck = null;
+let colors;
+let commander;
+let companion;
+let format;
+let isPublic;
+let title;
+let decklist;
+
 
 // If user logs in or out
 onAuthStateChanged(auth, async (user) => {
@@ -147,12 +156,33 @@ onAuthStateChanged(auth, async (user) => {
       singlePublic.classList.remove('display-none');
 
       // Check if the deck is made by the current user logged in, and make it editable if so
-      let deck = await getPublicDeckById(getValues.get('id'));
-      if(deck['user'] == userId) {
-        isOwned = true;
-        renderPrivateDeck(deck);
+      deck = await getPublicDeckById(getValues.get('id'));
+      console.log(deck)
+      if(deck != null) {
+        title = deck['Title'] ?? "";
+        colors = deck['Colors'] ?? "";
+        format = deck['Format'] ?? "";
+        commander = deck['Commander'] ?? "";
+        companion = deck['Companion'] ?? "";
+        isPublic = deck['Public'] ?? "";
+        decklist = deck['Decklist'] ?? "";
+
+        // Render the deck
+        console.log("All Cards:"+decklist)
+        if(deck['user'] == userId) {
+          isOwned = true;
+          renderPrivateDeck(deck);
+        } else {
+          renderPublicDeck(deck);
+        }
+
+      } else if (getValues.get('id') != "new"){
+        // Deck doesn't exist, and user is creating a new one
+
+        // TODO: 
+        // 
       } else {
-        renderPublicDeck(deck);
+        // Deck doesn't exist and user is tampering with query string
       }
       return;
     }
@@ -195,7 +225,8 @@ async function getPublicDeckById(id) {
     return docSnap.data();
   } else {
     // docSnap.data() will be undefined in this case
-    return false;
+    console.log("NOPE")
+    return null;
   }
 }
 
@@ -303,7 +334,7 @@ async function exchangeWithSymbols(string, symbolImagesAssoc) {
     return string;
 }
 
-async function renderPublicDeck (deck) {
+async function renderPublicDeck () {
   // Check if the id is actually an ID: 
   let sort = getValues.get('sort') ?? "type";
 
@@ -312,7 +343,7 @@ async function renderPublicDeck (deck) {
   singlePublic.innerHTML = "";
   
   // Fetch cards from API
-  let cards = deck['deck-list'];
+  let cards = decklist;
   cards.forEach(cardId => {
     idArray.push({ id: cardId });
   });
@@ -401,7 +432,7 @@ async function renderPublicDeck (deck) {
     <div class="build-main">
       <div class="build-header">
         <div>
-          <h2>${deck.Title}</h2>
+          <h2>${title}</h2>
           <p>${totalPrice != 0 ? "$"+Math.round(totalPrice * 100) / 100+" USD" : "No Price Available"}</p>
         </div>
         <div>
@@ -454,9 +485,7 @@ async function renderPublicDeck (deck) {
   renderSidebar(cardData['data'][0]);
 }
 
-
-
-async function renderPrivateDeck(deck) {
+async function renderPrivateDeck() {
     // Check if the id is actually an ID: 
   let sort = getValues.get('sort') ?? "type";
 
@@ -465,7 +494,7 @@ async function renderPrivateDeck(deck) {
   singlePublic.innerHTML = "";
   
   // Fetch cards from API
-  let cards = deck['deck-list'];
+  let cards = decklist;
   cards.forEach(cardId => {
     idArray.push({ id: cardId });
   });
@@ -558,7 +587,7 @@ async function renderPrivateDeck(deck) {
             <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
           </svg>
           <div>
-            <h2>${deck.Title}</h2>
+            <h2>${title}</h2>
             <p>${totalPrice != 0 ? "$"+Math.round(totalPrice * 100) / 100+" USD" : "No Price Available"}</p>
           </div>
         </div>
@@ -594,21 +623,29 @@ async function renderPrivateDeck(deck) {
           <div class="deckbuilder-edit-form-checkboxes">
             <div>
               <label for="set-private">Set As Private</label>
-              <input type="checkbox" name="set-private" id="set-private">
+              <input type="radio" name="set-status" id="set-private">
             </div>
             <div>
               <label for="set-public">Set As Public</label>
-              <input type="checkbox" name="set-public" id="set-public">
+              <input type="radio" name="set-status" id="set-public">
             </div>
           </div>
           <div>
             <input class="button" type="submit" name="deckbuilder-edit-form-submit" id="deckbuilder-edit-form-submit" value="Update">
+            <div class="hidden-inputs">
+              <input type="hidden" id="colors">
+              <input type="hidden" id="commander">
+              <input type="hidden" id="companion">
+              <input type="hidden" id="public">
+              <input type="hidden" id="title">
+              <input type="hidden" id="decklist">
+            </div>
           </div>
-        </form
-      </div>
+        </form>
       </div>
       <div class="build-grid">
         ${cardGridHTML}
+      </div>
       </div>
     </div>
   </div>
@@ -621,16 +658,23 @@ async function renderPrivateDeck(deck) {
     let singleCardData = cardData['data'].find((card) => card.id === itemId);
     item.addEventListener('click', () => renderSidebar(singleCardData));
   });
-
-  // Disable form Defaults
   const editForm = document.querySelector('.deckbuilder-edit-form');
-  editForm.addEventListener('submit', () => {
 
-  });
-
+  // Deck Edit Form Opening button
   const editButton = document.querySelector('.deckbuilder-edit-button')
   editButton.addEventListener('click', () => {
-    editForm.classList.toggle('hidden')
+    editForm.classList.toggle('hidden');
+  });
+
+  // Disable form Defaults. This sets the update button
+  editForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    updateDeck();
+  });
+
+  const saveButton = document.querySelector('.save');
+  saveButton.addEventListener('click', () => {
+    updateDeck();
   });
 
   // Select Dropdown Functionality
@@ -657,7 +701,6 @@ function renderSidebar(card) {
 }
 
 function renderPublicSidebar(card) {
-  console.log(card);
   // Notes: 
   // When the format is singleton, do not show add, instead just a "remove from deck"
   // When the card is 2 sided, add a transform button
@@ -679,9 +722,7 @@ function renderPublicSidebar(card) {
 }
 
 function renderPrivateSidebar(card) {
-  console.log(card);
   // Notes: 
-  // When the format is singleton, do not show add, instead just a "remove from deck"
   // When the card is 2 sided, add a transform button
   const sidebar = document.querySelector('.build-sidebar');
   let image;
@@ -715,8 +756,48 @@ function renderPrivateSidebar(card) {
     <img class="mtg-card display-card" src="${image}">
     ${price}
     <div class="button-wrapper">
+      <div class="quantity-buttons">
+        <button class="minus" type="button">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" />
+          </svg>
+        </button>
+        <button class="plus" type="button">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+        </button>
+      </div>
       <a href="single.html?id=${card.id}">More Card Info</a>
       ${setCommander}
     </div>
   </div>`;
+}
+
+// Create, Update And Delete Functions
+
+// This sets the Save Button
+const saveButton = document.querySelector('.save');
+
+async function updateDeck() {
+
+  if(deck == null) {
+    console.log('no Deck');
+    return;
+  }
+
+  // Get all the data from the form
+  const formInputs = document.querySelectorAll('.deckbuilder-edit-form input');
+  
+  const updatedDocument = await setDoc(doc(db, "decks", getValues.get('id')), {
+    Colors: colors,
+    Commander: commander,
+    Companion: companion,
+    Format: format,
+    Public: isPublic,
+    Title: title,
+    Decklist: decklist,
+    user: userId
+  });
+  console.log(formInputs)
 }

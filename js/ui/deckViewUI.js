@@ -1,6 +1,10 @@
 import { renderSidebar } from "./sidebarUI";
 import { getCardsFromList, getAllSymbols } from "/js/api";
 import { deckState } from "../deck/deckState";
+import { saveDeck } from "../firebase/firestoreDecks";
+
+// Query String Parameters
+const getValues = new URLSearchParams(window.location.search);
 
 const symbolData = await getAllSymbols();
 let symbolImagesAssoc = {};
@@ -16,10 +20,6 @@ async function exchangeWithSymbols(string, symbolImagesAssoc) {
 }
 
 export async function renderDeck(decklist, container, isPublic) {
-
-    // Query Stringg Parameters
-    const getValues = new URLSearchParams(window.location.search);
-
 
     // Array of objects containing an ID for every card
     let idArray = [];
@@ -149,9 +149,9 @@ export async function renderDeck(decklist, container, isPublic) {
     </div>
     `
 
-    :
+        :
 
-    `<div class="build-flex public">
+        `<div class="build-flex public">
         <div class="build-sidebar"></div>
         <div class="build-main">
         <div class="build-header">
@@ -216,11 +216,11 @@ export async function renderDeck(decklist, container, isPublic) {
     </div>`;
     container.innerHTML += html;
 
-    if(isPublic) {
+    if (isPublic) {
         initializePublic(cardData);
         renderSidebar(false, cardData['data'][0]);
     } else {
-        initializePrivate(cardData);
+        initializePrivate(cardData, decklist, container, isPublic);
         renderSidebar(true, cardData['data'][0]);
     }
 }
@@ -246,41 +246,44 @@ export function initializePublic(cardData) {
     });
 }
 
-export function initializePrivate(cardData) {
-  const allItemsInDeck = document.querySelectorAll('.build-card-item');
-  allItemsInDeck.forEach(item => {
-    let itemId = item.getAttribute('id');
-    let singleCardData = cardData['data'].find((card) => card.id === itemId);
-    item.addEventListener('click', () => renderSidebar(true, singleCardData));
-  });
-  const editForm = document.querySelector('.deckbuilder-edit-form');
+export function initializePrivate(cardData, decklist, container, isPublic) {
+    const allItemsInDeck = document.querySelectorAll('.build-card-item');
+    allItemsInDeck.forEach(item => {
+        let itemId = item.getAttribute('id');
+        let singleCardData = cardData['data'].find((card) => card.id === itemId);
+        item.addEventListener('click', () => renderSidebar(true, singleCardData));
+    });
+    const editForm = document.querySelector('.deckbuilder-edit-form');
 
-  // Deck Edit Form Opening button
-  const editButton = document.querySelector('.deckbuilder-edit-button')
-  editButton.addEventListener('click', () => {
-    editForm.classList.toggle('hidden');
-  });
+    // Deck Edit Form Opening button
+    const editButton = document.querySelector('.deckbuilder-edit-button')
+    editButton.addEventListener('click', () => {
+        editForm.classList.toggle('hidden');
+    });
 
-  // Disable form Defaults. This sets the update button
-  editForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    updateDeck();
-  });
+    // Disable form Defaults. This sets the update button
+    editForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        saveDeck(getValues.get('id'), deckState);
+        console.log(deckState);
+        renderDeck(decklist, container, isPublic);
+    });
 
-  const saveButton = document.querySelector('.save');
-  saveButton.addEventListener('click', () => {
-    updateDeck();
-  });
+    const saveButton = document.querySelector('.save');
+    saveButton.addEventListener('click', () => {
+        saveDeck(getValues.get('id'), deckState);
+        renderDeck(decklist, container, isPublic);
+    });
 
-  // Select Dropdown Functionality
-  let dropdownButtons = document.querySelectorAll('.dropdown-button');
-  dropdownButtons.forEach(button => {
-      button.addEventListener('click', (ev) => {
-          ev.preventDefault();
-          const dropdown = button.nextElementSibling;
-          dropdown.classList.toggle('hidden');
-          button.classList.toggle('clicked');
-          button.blur();
-      })
-  });
+    // Select Dropdown Functionality
+    let dropdownButtons = document.querySelectorAll('.dropdown-button');
+    dropdownButtons.forEach(button => {
+        button.addEventListener('click', (ev) => {
+            ev.preventDefault();
+            const dropdown = button.nextElementSibling;
+            dropdown.classList.toggle('hidden');
+            button.classList.toggle('clicked');
+            button.blur();
+        })
+    });
 }

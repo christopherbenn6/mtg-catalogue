@@ -59,7 +59,7 @@ function initializeForms() {
         createUser(emailSignUpInput.value.trim(), passwordSignUpInput.value.trim());
     });
 
-    logInButton.addEventListener('click', (e)=> {
+    logInButton.addEventListener('click', (e) => {
         e.preventDefault();
         logIn(emailLogInInput.value.trim(), passwordLogInInput.value.trim())
     });
@@ -78,51 +78,51 @@ function initializeForms() {
 
     logInOutButton.addEventListener('click', (e) => {
         e.preventDefault();
-        if(userId) {
+        if (userId) {
             logOut()
-            .then(() => {
-                // Sign-out successful.
-                window.location.href = "/deckbuilder.html";
-            }).catch((error) => {
-                // An error happened.
-                console.log(error.message);
-            });
-        } 
+                .then(() => {
+                    // Sign-out successful.
+                    window.location.href = "/deckbuilder.html";
+                }).catch((error) => {
+                    // An error happened.
+                    console.log(error.message);
+                });
+        }
     });
 }
 
 initializeForms();
 
 authListener(async (user) => {
-  if (!user) {
-    forms.classList.remove("display-none");
-    deckbuilder.classList.add("display-none");
-    return;
-  }
-
-  userId = user.uid;
-
-  const id = params.get("id");
-
-  if (id) {
-    forms.classList.add("display-none");
-    deckbuilder.classList.add("display-none");
-    singlePublic.classList.remove("display-none");
-
-    const deck = await getDeckById(id);
-    setDeckState(deck);
-    let notEditable = userId != deckState.user;
-
-    if (deck) {
-      renderDeck(deckState.Decklist, singlePublic, notEditable);
+    if (!user) {
+        forms.classList.remove("display-none");
+        deckbuilder.classList.add("display-none");
+        return;
     }
 
-    return;
-  }
+    userId = user.uid;
 
-  forms.classList.add("display-none");
-  deckbuilder.classList.remove("display-none");
+    const id = params.get("id");
 
-  const decks = await getPublicDecks();
-  renderPublicDeckList(decks, document.querySelector("#public-decks"));
+    if (id) {
+        forms.classList.add("display-none");
+        deckbuilder.classList.add("display-none");
+        singlePublic.classList.remove("display-none");
+
+        const deck = await getDeckById(id);
+        setDeckState(deck);
+        let notEditable = userId != deckState.user;
+
+        if (deck) {
+            renderDeck(deckState.Decklist, singlePublic, notEditable);
+        }
+
+        return;
+    }
+
+    forms.classList.add("display-none");
+    deckbuilder.classList.remove("display-none");
+
+    const decks = await getPublicDecks();
+    renderPublicDeckList(decks, document.querySelector("#public-decks"));
 });

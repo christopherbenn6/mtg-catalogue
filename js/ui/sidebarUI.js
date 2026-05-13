@@ -1,5 +1,5 @@
 export function renderSidebar(isOwned, card) {
-  if(isOwned) {
+  if (isOwned) {
     renderPrivateSidebar(card);
   } else {
     renderPublicSidebar(card);
@@ -13,7 +13,7 @@ function renderPublicSidebar(card) {
   const sidebar = document.querySelector('.build-sidebar');
   let image;
   let price = card.prices.usd ? `<p class="price">${card.prices.usd} USD </p>` : "";
-  if(card.card_faces != null) {
+  if (card.card_faces != null) {
     image = card.card_faces[0].image_uris.normal;
   } else {
     image = card.image_uris.normal;
@@ -37,23 +37,23 @@ function renderPrivateSidebar(card) {
   let elidgebleCommander = false;
 
   // If the card is legendary
-  if(card.type_line.toLowerCase().includes("legendary")) {
+  if (card.type_line.toLowerCase().includes("legendary")) {
     // If the card is a creature, vehicle or spacecraft
-    if(card.type_line.toLowerCase().includes("creature") || card.type_line.toLowerCase().includes("spacecraft") || card.type_line.toLowerCase().includes("vehicle")) {
+    if (card.type_line.toLowerCase().includes("creature") || card.type_line.toLowerCase().includes("spacecraft") || card.type_line.toLowerCase().includes("vehicle")) {
       elidgebleCommander = true;
-    } else if (card.type_line.toLowerCase().includes("planeswalker")){
-      if(card.oracle_text.toLowerCase().includes("commander")) {
+    } else if (card.type_line.toLowerCase().includes("planeswalker")) {
+      if (card.oracle_text.toLowerCase().includes("commander")) {
         elidgebleCommander = true;
       }
     }
   }
 
   let setCommander = "";
-  if(elidgebleCommander) {
+  if (elidgebleCommander) {
     setCommander = `<button type="button">Set As Commander</button>`;
   }
 
-  if(card.card_faces != null) {
+  if (card.card_faces != null) {
     image = card.card_faces[0].image_uris.normal;
   } else {
     image = card.image_uris.normal;

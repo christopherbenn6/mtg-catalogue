@@ -1,7 +1,7 @@
 import { renderSidebar } from "./sidebarUI";
 import { getCardsFromList, getAllSymbols } from "/js/api";
 import { deckState } from "../deck/deckState";
-import { saveDeck } from "../firebase/firestoreDecks";
+import { updateDeck } from "../deck/deckService";
 
 // Query String Parameters
 const getValues = new URLSearchParams(window.location.search);
@@ -195,12 +195,12 @@ export async function renderDeck(decklist, container, isPublic) {
             </div>
             <div class="deckbuilder-edit-form-checkboxes">
                 <div>
-                <label for="set-private">Set As Private</label>
-                <input type="radio" name="set-status" id="set-private">
+                    <label for="set-private">Set As Private</label>
+                    <input type="radio" name="set-status" id="set-private">
                 </div>
                 <div>
-                <label for="set-public">Set As Public</label>
-                <input type="radio" name="set-status" id="set-public">
+                    <label for="set-public">Set As Public</label>
+                    <input type="radio" name="set-status" id="set-public">
                 </div>
             </div>
             <div>
@@ -264,14 +264,13 @@ export function initializePrivate(cardData, decklist, container, isPublic) {
     // Disable form Defaults. This sets the update button
     editForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        saveDeck(getValues.get('id'), deckState);
-        console.log(deckState);
+        updateDeck(getValues.get('id'), cardData);
         renderDeck(decklist, container, isPublic);
     });
 
     const saveButton = document.querySelector('.save');
     saveButton.addEventListener('click', () => {
-        saveDeck(getValues.get('id'), deckState);
+        updateDeck(getValues.get('id'), cardData);
         renderDeck(decklist, container, isPublic);
     });
 

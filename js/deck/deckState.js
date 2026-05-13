@@ -12,5 +12,5 @@ export let deckState = {
 
 export function setDeckState(newState) {
     Object.assign(deckState, newState)
-    console.log(newState)
+    console.log(deckState)
 }

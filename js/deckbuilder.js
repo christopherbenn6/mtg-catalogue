@@ -110,6 +110,7 @@ authListener(async (user) => {
         singlePublic.classList.remove("display-none");
 
         const deck = await getDeckById(id);
+        console.log(deck)
         setDeckState(deck);
         let notEditable = userId != deckState.user;
 

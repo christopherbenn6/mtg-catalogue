@@ -1,7 +1,7 @@
 import { authListener, logOut, createUser, logIn, signInWithGoogle } from "./firebase/auth";
-import { getPublicDecks, getDeckById } from "./firebase/firestoreDecks";
+import { getPublicDecks, getDeckById, getPrivateDecks } from "./firebase/firestoreDecks";
 
-import { renderPublicDeckList } from "./ui/deckListUI";
+import { renderPublicDeckList, renderPrivateDeckList } from "./ui/deckListUI";
 import { renderDeck } from "./ui/deckViewUI";
 
 import { deckState, setDeckState } from "./deck/deckState";
@@ -121,9 +121,14 @@ authListener(async (user) => {
         return;
     }
 
+    // All Decks View
     forms.classList.add("display-none");
     deckbuilder.classList.remove("display-none");
 
-    const decks = await getPublicDecks();
-    renderPublicDeckList(decks, document.querySelector("#public-decks"));
+    // Private Decks
+    const privateDecks = await getPrivateDecks(userId);
+    renderPrivateDeckList(privateDecks, document.querySelector("#user-decks"));
+    // Public Decks
+    const publicDecks = await getPublicDecks();
+    renderPublicDeckList(publicDecks, document.querySelector("#public-decks"));
 });

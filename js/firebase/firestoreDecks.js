@@ -16,6 +16,13 @@ export async function getPublicDecks() {
     return snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
 }
 
+export async function getPrivateDecks(userId) {
+    const q = query(collection(db, "decks"), where("user", "==", userId));
+    const snapshot = await getDocs(q);
+
+    return snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+}
+
 export async function getDeckById(id) {
     const snap = await getDoc(doc(db, "decks", id));
     return snap.exists() ? snap.data() : null;
